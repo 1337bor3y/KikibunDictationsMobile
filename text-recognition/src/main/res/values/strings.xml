@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_time_camera_permission_ask">We need your camera to analyze your perfect dictation text! ✨\nGrant us permission and let\'s get this party started! 🎉</string>
+    <string name="rationale_camera_permission">Whoops! It looks like you\'ve denied camera permission! Don\'t worry, we just wanna see your dictation text to make sure it\'s 100% correct. Grant us permission and let\'s get this party started!</string>
+    <string name="permission_request_button_text">Unleash the Camera!</string>
+</resources>

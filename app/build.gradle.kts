@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.bor3y.kikibundictations"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.bor3y.kikibundictations"

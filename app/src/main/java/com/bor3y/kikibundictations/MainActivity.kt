@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.bor3y.kikibundictations.ui.theme.KikibunDictationsTheme
+import com.bor3y.textrecognition.CameraPreviewScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             KikibunDictationsTheme {
-
+                CameraPreviewScreen()
             }
         }
     }
