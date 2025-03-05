@@ -43,16 +43,19 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    // Debugging tools
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    debugImplementation(libs.androidx.ui.tooling)
+
     // CameraX for camera functionality
     implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
-    implementation(libs.androidx.camera.extensions)
+    implementation(libs.androidx.camera.camera2)
 
     // ML Kit Text Recognition
     implementation(libs.text.recognition)
 
-    // Debugging tools
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    debugImplementation(libs.androidx.ui.tooling)
+    // Permissions
+    implementation(libs.accompanist.permissions)
 }
