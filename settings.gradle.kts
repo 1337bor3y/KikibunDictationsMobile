@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "KikibunDictations"
 include(":app")
+include(":text-recognition")
