@@ -1,5 +1,6 @@
 package com.bor3y.textrecognition
 
+import androidx.camera.compose.CameraXViewfinder
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,11 +11,18 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -25,7 +33,8 @@ import com.google.accompanist.permissions.shouldShowRationale
 fun CameraPreviewScreen(modifier: Modifier = Modifier) {
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     if (cameraPermissionState.status.isGranted) {
-        CameraPreviewContent(modifier)
+        val viewModel = remember { CameraPreviewViewModel() }
+        CameraPreviewContent(viewModel, modifier)
     } else {
         Column(
             modifier = modifier
@@ -50,6 +59,21 @@ fun CameraPreviewScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun CameraPreviewContent(modifier: Modifier = Modifier) {
-    // TODO: Implement
+fun CameraPreviewContent(
+    viewModel: CameraPreviewViewModel,
+    modifier: Modifier = Modifier,
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+) {
+    val surfaceRequest by viewModel.surfaceRequest.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    LaunchedEffect(lifecycleOwner) {
+        viewModel.bindToCamera(context.applicationContext, lifecycleOwner)
+    }
+
+    surfaceRequest?.let { request ->
+        CameraXViewfinder(
+            surfaceRequest = request,
+            modifier = modifier
+        )
+    }
 }
