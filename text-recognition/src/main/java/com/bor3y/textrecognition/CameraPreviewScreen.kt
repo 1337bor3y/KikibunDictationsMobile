@@ -24,6 +24,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
@@ -38,25 +39,7 @@ fun CameraPreviewScreen(
     if (cameraPermissionState.status.isGranted) {
         CameraPreviewContent(viewModel, modifier)
     } else {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .wrapContentSize()
-                .widthIn(max = 480.dp)
-                .padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
-                stringResource(R.string.rationale_camera_permission)
-            } else {
-                stringResource(R.string.first_time_camera_permission_ask)
-            }
-            Text(textToShow, textAlign = TextAlign.Center)
-            Spacer(Modifier.height(16.dp))
-            Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
-                Text(stringResource(R.string.permission_request_button_text))
-            }
-        }
+        CameraPermissionRequest(modifier, cameraPermissionState)
     }
 }
 
@@ -77,5 +60,32 @@ fun CameraPreviewContent(
             surfaceRequest = request,
             modifier = modifier
         )
+    }
+}
+
+@Composable
+@OptIn(ExperimentalPermissionsApi::class)
+private fun CameraPermissionRequest(
+    modifier: Modifier,
+    cameraPermissionState: PermissionState
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .wrapContentSize()
+            .widthIn(max = 480.dp)
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
+            stringResource(R.string.rationale_camera_permission)
+        } else {
+            stringResource(R.string.first_time_camera_permission_ask)
+        }
+        Text(textToShow, textAlign = TextAlign.Center)
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
+            Text(stringResource(R.string.permission_request_button_text))
+        }
     }
 }
