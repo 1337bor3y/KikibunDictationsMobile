@@ -25,11 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
@@ -45,7 +45,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 @Composable
 fun CameraPreviewScreen(
     modifier: Modifier = Modifier,
-    viewModel: CameraPreviewViewModel = hiltViewModel()
+    viewModel: TextRecognitionViewModel = hiltViewModel()
 ) {
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     if (cameraPermissionState.status.isGranted) {
@@ -57,20 +57,29 @@ fun CameraPreviewScreen(
 
 @Composable
 fun CameraPreviewContent(
-    viewModel: CameraPreviewViewModel,
+    viewModel: TextRecognitionViewModel,
     modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
-    val surfaceRequest by viewModel.surfaceRequest.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LaunchedEffect(lifecycleOwner) {
-        viewModel.bindToCamera(context.applicationContext, lifecycleOwner)
+        viewModel.onEvent(
+            TextRecognitionEvent.BindToCamera(
+                context.applicationContext,
+                lifecycleOwner
+            )
+        )
     }
 
     Scaffold { padding ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            surfaceRequest?.let { request ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            state.surfaceRequest?.let { request ->
                 CameraXViewfinder(
                     surfaceRequest = request,
                     modifier = modifier
@@ -80,23 +89,24 @@ fun CameraPreviewContent(
             IconButton(
                 modifier = Modifier
                     .align(if (isLandscape()) Alignment.CenterEnd else Alignment.BottomCenter)
-                    .padding(
-                        bottom = padding.calculateBottomPadding() + 10.dp,
-                        end = padding.calculateRightPadding(LayoutDirection.Ltr) + 10.dp
-                    )
+                    .padding(16.dp)
                     .background(Color.White, shape = CircleShape),
                 onClick = {
-                    viewModel.takePhoto { bitmap ->
-                        bitmap?.let {
-                            // TODO: Show image with frame
-                        }
-                    }
+                    viewModel.onEvent(TextRecognitionEvent.TakePhoto)
                 }
             ) {
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Take photo"
                 )
+            }
+
+            state.capturedImage?.let { bitmap ->
+                ImagePreviewScreen(
+                    imageBitmap = bitmap.asImageBitmap()
+                ) {
+                    viewModel.onEvent(TextRecognitionEvent.CloseImagePreview)
+                }
             }
         }
     }
