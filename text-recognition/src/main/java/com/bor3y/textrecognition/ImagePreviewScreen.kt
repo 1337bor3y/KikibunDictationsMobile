@@ -23,8 +23,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,7 @@ fun ImagePreviewScreen(
     onClose: () -> Unit
 ) {
     val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
 
     Box(
         modifier = Modifier
@@ -53,9 +56,13 @@ fun ImagePreviewScreen(
         ResizableFrame(
             rectSize = Size(300f, 200f),
             rectPosition = Offset(100f, 200f),
-            handleSize = with(density) {20.dp.toPx()},
+            handleSize = with(density) { 20.dp.toPx() },
             frameColor = colorResource(id = R.color.camera_frame_color),
-            handlesColor = colorResource(id = R.color.frame_handles_color)
+            handlesColor = colorResource(id = R.color.frame_handles_color),
+            containerSize = Size(
+                configuration.screenWidthDp * density.density,
+                configuration.screenHeightDp * density.density
+            )
         )
 
         IconButton(
@@ -79,7 +86,8 @@ fun ResizableFrame(
     rectPosition: Offset,
     handleSize: Float,
     frameColor: Color,
-    handlesColor: Color
+    handlesColor: Color,
+    containerSize: Size
 ) {
     var mutableRectSize by remember { mutableStateOf(rectSize) }
     var mutableRectPosition by remember { mutableStateOf(rectPosition) }
@@ -91,10 +99,13 @@ fun ResizableFrame(
             detectDragGestures(
                 onDragStart = { touchPoint ->
                     val corners = listOf(
-                        mutableRectPosition, // Top-left
-                        mutableRectPosition + Offset(mutableRectSize.width, 0f), // Top-right
-                        mutableRectPosition + Offset(0f, mutableRectSize.height), // Bottom-left
-                        mutableRectPosition + Offset(mutableRectSize.width, mutableRectSize.height) // Bottom-right
+                        mutableRectPosition,
+                        mutableRectPosition + Offset(mutableRectSize.width, 0f),
+                        mutableRectPosition + Offset(0f, mutableRectSize.height),
+                        mutableRectPosition + Offset(
+                            mutableRectSize.width,
+                            mutableRectSize.height
+                        )
                     )
 
                     resizingCorner = corners.find {
@@ -105,22 +116,40 @@ fun ResizableFrame(
                 onDrag = { change, dragAmount ->
                     change.consume()
                     resizingCorner?.let {
-                        val newWidth =
-                            (mutableRectSize.width + if (it.x == mutableRectPosition.x) -dragAmount.x else dragAmount.x).coerceAtLeast(
-                                50f
-                            )
-                        val newHeight =
-                            (mutableRectSize.height + if (it.y == mutableRectPosition.y) -dragAmount.y else dragAmount.y).coerceAtLeast(
-                                50f
-                            )
-                        mutableRectSize = Size(newWidth, newHeight)
+                        val isLeft = it.x == mutableRectPosition.x
+                        val isTop = it.y == mutableRectPosition.y
 
-                        if (it.x == mutableRectPosition.x) mutableRectPosition =
-                            mutableRectPosition.copy(x = mutableRectPosition.x + dragAmount.x)
-                        if (it.y == mutableRectPosition.y) mutableRectPosition =
-                            mutableRectPosition.copy(y = mutableRectPosition.y + dragAmount.y)
+                        var newWidth =
+                            mutableRectSize.width + (if (isLeft) -dragAmount.x else dragAmount.x)
+                        var newHeight =
+                            mutableRectSize.height + (if (isTop) -dragAmount.y else dragAmount.y)
+
+                        newWidth = newWidth.coerceAtLeast(50f)
+                        newHeight = newHeight.coerceAtLeast(50f)
+
+                        val maxWidth = containerSize.width - mutableRectPosition.x
+                        val maxHeight = containerSize.height - mutableRectPosition.y
+                        newWidth = newWidth.coerceAtMost(maxWidth)
+                        newHeight = newHeight.coerceAtMost(maxHeight)
+
+                        if (isLeft) mutableRectPosition = mutableRectPosition.copy(
+                            x = (mutableRectPosition.x + dragAmount.x).coerceAtLeast(0f)
+                        )
+                        if (isTop) mutableRectPosition = mutableRectPosition.copy(
+                            y = (mutableRectPosition.y + dragAmount.y).coerceAtLeast(0f)
+                        )
+
+                        mutableRectSize = Size(newWidth, newHeight)
                     } ?: run {
-                        mutableRectPosition += dragAmount
+                        val newX = (mutableRectPosition.x + dragAmount.x).coerceIn(
+                            0f,
+                            containerSize.width - mutableRectSize.width
+                        )
+                        val newY = (mutableRectPosition.y + dragAmount.y).coerceIn(
+                            0f,
+                            containerSize.height - mutableRectSize.height
+                        )
+                        mutableRectPosition = Offset(newX, newY)
                     }
                 },
                 onDragEnd = {
@@ -133,14 +162,14 @@ fun ResizableFrame(
             color = frameColor,
             topLeft = mutableRectPosition,
             size = mutableRectSize,
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 5f)
+            style = Stroke(width = 5f)
         )
 
         val cornerOffsets = listOf(
-            mutableRectPosition, // Top-left
-            mutableRectPosition + Offset(mutableRectSize.width, 0f), // Top-right
-            mutableRectPosition + Offset(0f, mutableRectSize.height), // Bottom-left
-            mutableRectPosition + Offset(mutableRectSize.width, mutableRectSize.height) // Bottom-right
+            mutableRectPosition,
+            mutableRectPosition + Offset(mutableRectSize.width, 0f),
+            mutableRectPosition + Offset(0f, mutableRectSize.height),
+            mutableRectPosition + Offset(mutableRectSize.width, mutableRectSize.height)
         )
 
         cornerOffsets.forEach { corner ->
