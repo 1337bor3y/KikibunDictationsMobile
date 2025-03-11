@@ -3,6 +3,7 @@ package com.bor3y.textrecognition
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.graphics.Rect
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -11,6 +12,8 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -93,5 +96,32 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
 
     private fun closeImagePreview() {
         _state.update { it.copy(capturedImage = null) }
+    }
+
+    private fun cropBitmap(
+        imageBitmap: Bitmap,
+        framePosition: Offset,
+        frameSize: Size,
+        imageSize: Size
+    ): Bitmap {
+        val scaleX = imageBitmap.width / imageSize.width
+        val scaleY = imageBitmap.height / imageSize.height
+
+        val left = (framePosition.x * scaleX).toInt().coerceIn(0, imageBitmap.width)
+        val top = (framePosition.y * scaleY).toInt().coerceIn(0, imageBitmap.height)
+        val right =
+            ((framePosition.x + frameSize.width) * scaleX).toInt().coerceIn(0, imageBitmap.width)
+        val bottom =
+            ((framePosition.y + frameSize.height) * scaleY).toInt().coerceIn(0, imageBitmap.height)
+
+        val cropRect = Rect(left, top, right, bottom)
+
+        return Bitmap.createBitmap(
+            imageBitmap,
+            cropRect.left,
+            cropRect.top,
+            cropRect.width(),
+            cropRect.height()
+        )
     }
 }
