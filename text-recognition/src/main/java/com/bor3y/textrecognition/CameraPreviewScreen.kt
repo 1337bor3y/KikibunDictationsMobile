@@ -103,10 +103,9 @@ fun CameraPreviewContent(
 
             state.capturedImage?.let { bitmap ->
                 ImagePreviewScreen(
-                    imageBitmap = bitmap.asImageBitmap()
-                ) {
-                    viewModel.onEvent(TextRecognitionEvent.CloseImagePreview)
-                }
+                    imageBitmap = bitmap.asImageBitmap(),
+                    onEvent = viewModel::onEvent
+                )
             }
         }
     }

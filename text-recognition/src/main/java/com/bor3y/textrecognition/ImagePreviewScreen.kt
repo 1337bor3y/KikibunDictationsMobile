@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ImagePreviewScreen(
     imageBitmap: ImageBitmap,
-    onClose: () -> Unit
+    onEvent: (TextRecognitionEvent) -> Unit
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -62,11 +62,23 @@ fun ImagePreviewScreen(
             containerSize = Size(
                 configuration.screenWidthDp * density.density,
                 configuration.screenHeightDp * density.density
-            )
+            ),
+            onFrameChange = { frameSize, framePosition ->
+                onEvent(
+                    TextRecognitionEvent.UpdateDimensions(
+                        frameSize = frameSize,
+                        framePosition = framePosition,
+                        screenSize = Size(
+                            configuration.screenWidthDp * density.density,
+                            configuration.screenHeightDp * density.density
+                        )
+                    )
+                )
+            }
         )
 
         IconButton(
-            onClick = { onClose() },
+            onClick = { onEvent(TextRecognitionEvent.CloseImagePreview) },
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp)
@@ -87,7 +99,8 @@ fun ResizableFrame(
     handleSize: Float,
     frameColor: Color,
     handlesColor: Color,
-    containerSize: Size
+    containerSize: Size,
+    onFrameChange: (frameSize: Size, framePosition: Offset) -> Unit
 ) {
     var mutableRectSize by remember { mutableStateOf(rectSize) }
     var mutableRectPosition by remember { mutableStateOf(rectPosition) }
@@ -151,6 +164,8 @@ fun ResizableFrame(
                         )
                         mutableRectPosition = Offset(newX, newY)
                     }
+
+                    onFrameChange(rectSize, rectPosition)
                 },
                 onDragEnd = {
                     resizingCorner = null

@@ -40,10 +40,23 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
     private val imageCapture = ImageCapture.Builder().build()
 
     fun onEvent(event: TextRecognitionEvent) {
-        when(event) {
-            is TextRecognitionEvent.BindToCamera -> bindToCamera(event.appContext, event.lifecycleOwner)
+        when (event) {
+            is TextRecognitionEvent.BindToCamera -> bindToCamera(
+                event.appContext,
+                event.lifecycleOwner
+            )
+
             TextRecognitionEvent.TakePhoto -> takePhoto()
             TextRecognitionEvent.CloseImagePreview -> closeImagePreview()
+            is TextRecognitionEvent.UpdateDimensions -> {
+                _state.update {
+                    it.copy(
+                        frameSize = event.frameSize,
+                        framePosition = event.framePosition,
+                        screenSize = event.screenSize
+                    )
+                }
+            }
         }
     }
 
@@ -51,7 +64,10 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
             processCameraProvider.bindToLifecycle(
-                lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, cameraPreviewUseCase, imageCapture
+                lifecycleOwner,
+                CameraSelector.DEFAULT_BACK_CAMERA,
+                cameraPreviewUseCase,
+                imageCapture
             )
 
             try {
@@ -102,10 +118,10 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
         imageBitmap: Bitmap,
         framePosition: Offset,
         frameSize: Size,
-        imageSize: Size
+        screenSize: Size
     ): Bitmap {
-        val scaleX = imageBitmap.width / imageSize.width
-        val scaleY = imageBitmap.height / imageSize.height
+        val scaleX = imageBitmap.width / screenSize.width
+        val scaleY = imageBitmap.height / screenSize.height
 
         val left = (framePosition.x * scaleX).toInt().coerceIn(0, imageBitmap.width)
         val top = (framePosition.y * scaleY).toInt().coerceIn(0, imageBitmap.height)
