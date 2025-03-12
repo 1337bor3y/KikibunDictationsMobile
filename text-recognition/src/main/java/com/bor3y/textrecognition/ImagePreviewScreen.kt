@@ -165,7 +165,7 @@ fun ResizableFrame(
                         mutableRectPosition = Offset(newX, newY)
                     }
 
-                    onFrameChange(rectSize, rectPosition)
+                    onFrameChange(mutableRectSize, mutableRectPosition)
                 },
                 onDragEnd = {
                     resizingCorner = null
