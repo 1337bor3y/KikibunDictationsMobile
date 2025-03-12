@@ -51,9 +51,11 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
             is TextRecognitionEvent.UpdateDimensions -> {
                 _state.update {
                     it.copy(
-                        frameSize = event.frameSize,
-                        framePosition = event.framePosition,
-                        screenSize = event.screenSize
+                        dimensions =  Dimensions(
+                            frameSize = event.frameSize,
+                            framePosition = event.framePosition,
+                            screenSize = event.screenSize
+                        )
                     )
                 }
             }
