@@ -18,4 +18,6 @@ sealed interface TextRecognitionEvent {
         val framePosition: Offset,
         val screenSize: Size
     ) : TextRecognitionEvent
+
+    data object AnalyzeImage: TextRecognitionEvent
 }

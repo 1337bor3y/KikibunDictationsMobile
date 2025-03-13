@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +52,7 @@ fun ImagePreviewScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.FillBounds
         )
 
         ResizableFrame(
@@ -82,12 +84,21 @@ fun ImagePreviewScreen(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp)
-                .background(Color.White, shape = CircleShape),
+                .background(Color.White, shape = CircleShape)
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Close image preview"
             )
+        }
+
+        Button(
+            onClick = { onEvent(TextRecognitionEvent.AnalyzeImage) },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        ) {
+            Text(text = "Analyze")
         }
     }
 }

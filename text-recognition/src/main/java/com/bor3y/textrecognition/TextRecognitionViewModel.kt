@@ -17,6 +17,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +50,9 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
             )
 
             TextRecognitionEvent.TakePhoto -> takePhoto()
+
             TextRecognitionEvent.CloseImagePreview -> closeImagePreview()
+
             is TextRecognitionEvent.UpdateDimensions -> {
                 _state.update {
                     it.copy(
@@ -59,6 +64,8 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
                     )
                 }
             }
+
+            TextRecognitionEvent.AnalyzeImage -> analyzeImage()
         }
     }
 
@@ -116,21 +123,51 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
         _state.update { it.copy(capturedImage = null) }
     }
 
+    private fun analyzeImage() {
+        state.value.capturedImage?.let { capturedImage ->
+            state.value.dimensions?.let { dims ->
+                val image = InputImage.fromBitmap(
+                    cropBitmap(
+                        imageBitmap = capturedImage,
+                        screenSize = dims.screenSize,
+                        framePosition = dims.framePosition,
+                        frameSize = dims.frameSize
+                    ),
+                    0
+                )
+                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+                recognizer.process(image)
+                    .addOnSuccessListener { visionText ->
+                        _state.update {
+                            it.copy(
+                                recognizedText = visionText.text
+                            )
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        // Handle error
+                    }
+            }
+        }
+    }
+
     private fun cropBitmap(
         imageBitmap: Bitmap,
         framePosition: Offset,
         frameSize: Size,
         screenSize: Size
     ): Bitmap {
-        val scaleX = imageBitmap.width / screenSize.width
-        val scaleY = imageBitmap.height / screenSize.height
+        val scaleX = imageBitmap.width.toFloat() / screenSize.width
+        val scaleY = imageBitmap.height.toFloat() / screenSize.height
 
-        val left = (framePosition.x * scaleX).toInt().coerceIn(0, imageBitmap.width)
-        val top = (framePosition.y * scaleY).toInt().coerceIn(0, imageBitmap.height)
-        val right =
-            ((framePosition.x + frameSize.width) * scaleX).toInt().coerceIn(0, imageBitmap.width)
-        val bottom =
-            ((framePosition.y + frameSize.height) * scaleY).toInt().coerceIn(0, imageBitmap.height)
+        val left = (framePosition.x * scaleX).toInt().coerceIn(0, imageBitmap.width - 1)
+        val top = (framePosition.y * scaleY).toInt().coerceIn(0, imageBitmap.height - 1)
+        val width = (frameSize.width * scaleX).toInt().coerceAtLeast(1)
+        val height = (frameSize.height * scaleY).toInt().coerceAtLeast(1)
+
+        val right = (left + width).coerceAtMost(imageBitmap.width)
+        val bottom = (top + height).coerceAtMost(imageBitmap.height)
 
         val cropRect = Rect(left, top, right, bottom)
 
