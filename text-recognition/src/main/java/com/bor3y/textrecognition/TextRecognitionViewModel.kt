@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Rect
-import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -56,7 +55,7 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
             is TextRecognitionEvent.UpdateDimensions -> {
                 _state.update {
                     it.copy(
-                        dimensions =  Dimensions(
+                        dimensions = Dimensions(
                             frameSize = event.frameSize,
                             framePosition = event.framePosition,
                             screenSize = event.screenSize
@@ -108,12 +107,22 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
                         true
                     )
 
-                    _state.update { it.copy(capturedImage = rotatedBitmap) }
+                    _state.update {
+                        it.copy(
+                            capturedImage = rotatedBitmap,
+                            error = null
+                        )
+                    }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
                     super.onError(exception)
-                    Log.d("ImageCaptureException", exception.message ?: "Unknown exception")
+                    _state.update {
+                        it.copy(
+                            error = exception.message
+                                ?: "Unexpected error while capturing the image"
+                        )
+                    }
                 }
             }
         )
@@ -141,12 +150,18 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
                     .addOnSuccessListener { visionText ->
                         _state.update {
                             it.copy(
-                                recognizedText = visionText.text
+                                recognizedText = visionText.text,
+                                error = null
                             )
                         }
                     }
-                    .addOnFailureListener { e ->
-                        // Handle error
+                    .addOnFailureListener { exception ->
+                        _state.update {
+                            it.copy(
+                                error = exception.localizedMessage
+                                    ?: "Unexpected error while analyzing the image",
+                            )
+                        }
                     }
             }
         }
