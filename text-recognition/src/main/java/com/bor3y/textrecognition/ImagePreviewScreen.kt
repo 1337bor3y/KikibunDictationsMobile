@@ -53,7 +53,7 @@ fun ImagePreviewScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.Crop
         )
 
         ResizableFrame(

@@ -8,7 +8,7 @@ import androidx.compose.ui.geometry.Size
 data class TextRecognitionState(
     val surfaceRequest: SurfaceRequest? = null,
     val capturedImage: Bitmap? = null,
-    val recognizedText: String = "",
+    val recognizedText: String? = null,
     val dimensions: Dimensions? = null,
     val error: String? = null
 )

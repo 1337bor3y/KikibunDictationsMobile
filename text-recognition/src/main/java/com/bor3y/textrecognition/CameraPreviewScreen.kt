@@ -54,28 +54,40 @@ import com.google.accompanist.permissions.shouldShowRationale
 @Composable
 fun CameraPreviewScreen(
     modifier: Modifier = Modifier,
-    viewModel: TextRecognitionViewModel = hiltViewModel()
+    viewModel: TextRecognitionViewModel = hiltViewModel(),
+    onTextRecognized: (String) -> Unit
 ) {
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    state.recognizedText?.let(onTextRecognized)
+
     if (cameraPermissionState.status.isGranted) {
-        CameraPreviewContent(viewModel, modifier)
+        CameraPreviewContent(
+            modifier = modifier,
+            state = state,
+            onEvent = viewModel::onEvent
+        )
     } else {
-        CameraPermissionRequest(modifier, cameraPermissionState)
+        CameraPermissionRequest(
+            modifier = modifier,
+            cameraPermissionState = cameraPermissionState
+        )
     }
 }
 
 @Composable
 fun CameraPreviewContent(
-    viewModel: TextRecognitionViewModel,
     modifier: Modifier = Modifier,
+    state: TextRecognitionState,
+    onEvent: (TextRecognitionEvent) -> Unit,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(lifecycleOwner) {
-        viewModel.onEvent(
+        onEvent(
             TextRecognitionEvent.BindToCamera(
                 context.applicationContext,
                 lifecycleOwner
@@ -139,7 +151,7 @@ fun CameraPreviewContent(
                     .padding(16.dp)
                     .background(Color.White, shape = CircleShape),
                 onClick = {
-                    viewModel.onEvent(TextRecognitionEvent.TakePhoto)
+                    onEvent(TextRecognitionEvent.TakePhoto)
                 }
             ) {
                 Icon(
@@ -151,7 +163,7 @@ fun CameraPreviewContent(
             state.capturedImage?.let { bitmap ->
                 ImagePreviewScreen(
                     imageBitmap = bitmap.asImageBitmap(),
-                    onEvent = viewModel::onEvent
+                    onEvent = onEvent
                 )
             }
         }
