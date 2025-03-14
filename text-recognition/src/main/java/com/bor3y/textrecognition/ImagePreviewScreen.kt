@@ -31,6 +31,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -48,7 +49,7 @@ fun ImagePreviewScreen(
     ) {
         Image(
             bitmap = imageBitmap,
-            contentDescription = "Captured Photo",
+            contentDescription = stringResource(R.string.taken_image_content_description),
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center),
@@ -88,7 +89,7 @@ fun ImagePreviewScreen(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Close image preview"
+                contentDescription = stringResource(R.string.close_image_preview_button_content_description)
             )
         }
 
@@ -98,7 +99,7 @@ fun ImagePreviewScreen(
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
         ) {
-            Text(text = "Analyze")
+            Text(text = stringResource(R.string.analyze_button_text))
         }
     }
 }

@@ -97,7 +97,7 @@ fun CameraPreviewContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
-                    contentDescription = "Take photo"
+                    contentDescription = stringResource(R.string.take_photo_button_text)
                 )
             }
 
