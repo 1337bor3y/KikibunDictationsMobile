@@ -1,8 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.hiltAndroid)
 }
 
 android {
@@ -55,7 +53,7 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     debugImplementation(libs.androidx.ui.tooling)
 
-    // CameraX for camera functionality
+    // CameraX
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.lifecycle)
@@ -67,11 +65,9 @@ dependencies {
     // Permissions
     implementation(libs.accompanist.permissions)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
-
     // Icons
     implementation(libs.androidx.material.icons.extended)
+
+    // ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }

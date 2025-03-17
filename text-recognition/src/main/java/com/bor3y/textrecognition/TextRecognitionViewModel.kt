@@ -19,17 +19,15 @@ import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
-import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
-@HiltViewModel
-class TextRecognitionViewModel @Inject constructor() : ViewModel() {
+class TextRecognitionViewModel : ViewModel() {
     private val _state = MutableStateFlow(TextRecognitionState())
     val state = _state.asStateFlow()
 
@@ -70,18 +68,27 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
 
     private fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
         viewModelScope.launch {
-            val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
-            processCameraProvider.bindToLifecycle(
-                lifecycleOwner,
-                CameraSelector.DEFAULT_BACK_CAMERA,
-                cameraPreviewUseCase,
-                imageCapture
-            )
+            var processCameraProvider: ProcessCameraProvider? = null
 
             try {
+                processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
+                processCameraProvider.bindToLifecycle(
+                    lifecycleOwner,
+                    CameraSelector.DEFAULT_BACK_CAMERA,
+                    cameraPreviewUseCase,
+                    imageCapture
+                )
                 awaitCancellation()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        error = "Failed to bind camera: ${e.message}"
+                    )
+                }
             } finally {
-                processCameraProvider.unbindAll()
+                processCameraProvider?.unbindAll()
             }
         }
     }
