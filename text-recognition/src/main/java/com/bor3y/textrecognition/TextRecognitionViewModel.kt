@@ -50,19 +50,21 @@ class TextRecognitionViewModel : ViewModel() {
 
             TextRecognitionEvent.CloseImagePreview -> closeImagePreview()
 
-            is TextRecognitionEvent.UpdateDimensions -> {
+            is TextRecognitionEvent.UpdateFrameDimensions -> {
                 _state.update {
                     it.copy(
-                        dimensions = Dimensions(
-                            frameSize = event.frameSize,
-                            framePosition = event.framePosition,
-                            screenSize = event.screenSize
+                        frameDimensions = FrameDimensions(
+                            size = event.frameSize,
+                            position = event.framePosition
                         )
                     )
                 }
             }
 
-            TextRecognitionEvent.AnalyzeImage -> analyzeImage()
+            is TextRecognitionEvent.AnalyzeImage -> analyzeImage(
+                event.screenSize,
+                event.onTextRecognized
+            )
         }
     }
 
@@ -78,13 +80,19 @@ class TextRecognitionViewModel : ViewModel() {
                     cameraPreviewUseCase,
                     imageCapture
                 )
+                _state.update {
+                    it.copy(
+                        error = null
+                    )
+                }
                 awaitCancellation()
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
-                        error = "Failed to bind camera: ${e.message}"
+                        error = "Failed to bind the camera: " +
+                                (e.message ?: "Unknown error")
                     )
                 }
             } finally {
@@ -126,8 +134,8 @@ class TextRecognitionViewModel : ViewModel() {
                     super.onError(exception)
                     _state.update {
                         it.copy(
-                            error = exception.message
-                                ?: "Unexpected error while capturing the image"
+                            error = "Failed to capture the image: " +
+                                    (exception.message ?: "Unknown error")
                         )
                     }
                 }
@@ -139,38 +147,36 @@ class TextRecognitionViewModel : ViewModel() {
         _state.update { it.copy(capturedImage = null) }
     }
 
-    private fun analyzeImage() {
+    private fun analyzeImage(screenSize: Size, onTextRecognized: (String) -> Unit) {
         state.value.capturedImage?.let { capturedImage ->
-            state.value.dimensions?.let { dims ->
-                val image = InputImage.fromBitmap(
-                    cropBitmap(
-                        imageBitmap = capturedImage,
-                        screenSize = dims.screenSize,
-                        framePosition = dims.framePosition,
-                        frameSize = dims.frameSize
-                    ),
-                    0
-                )
-                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+            val image = InputImage.fromBitmap(
+                cropBitmap(
+                    imageBitmap = capturedImage,
+                    framePosition = state.value.frameDimensions.position,
+                    frameSize = state.value.frameDimensions.size,
+                    screenSize = screenSize,
+                ),
+                0
+            )
+            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
-                recognizer.process(image)
-                    .addOnSuccessListener { visionText ->
-                        _state.update {
-                            it.copy(
-                                recognizedText = visionText.text,
-                                error = null
-                            )
-                        }
+            recognizer.process(image)
+                .addOnSuccessListener { visionText ->
+                    onTextRecognized(visionText.text)
+                    _state.update {
+                        it.copy(
+                            error = null
+                        )
                     }
-                    .addOnFailureListener { exception ->
-                        _state.update {
-                            it.copy(
-                                error = exception.localizedMessage
-                                    ?: "Unexpected error while analyzing the image",
-                            )
-                        }
+                }
+                .addOnFailureListener { exception ->
+                    _state.update {
+                        it.copy(
+                            error = "Failed to analyze the image: " +
+                                    (exception.localizedMessage ?: "Unknown error")
+                        )
                     }
-            }
+                }
         }
     }
 

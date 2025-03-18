@@ -37,10 +37,16 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ImagePreviewScreen(
     imageBitmap: ImageBitmap,
-    onEvent: (TextRecognitionEvent) -> Unit
+    state: TextRecognitionState,
+    onEvent: (TextRecognitionEvent) -> Unit,
+    onTextRecognized: (String) -> Unit
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
+    val screenSize = Size(
+        configuration.screenWidthDp * density.density,
+        configuration.screenHeightDp * density.density
+    )
 
     Box(
         modifier = Modifier
@@ -57,24 +63,17 @@ fun ImagePreviewScreen(
         )
 
         ResizableFrame(
-            rectSize = Size(300f, 200f),
-            rectPosition = Offset(100f, 200f),
+            rectSize = state.frameDimensions.size,
+            rectPosition = state.frameDimensions.position,
             handleSize = with(density) { 20.dp.toPx() },
-            frameColor = colorResource(id = R.color.camera_frame_color),
-            handlesColor = colorResource(id = R.color.frame_handles_color),
-            containerSize = Size(
-                configuration.screenWidthDp * density.density,
-                configuration.screenHeightDp * density.density
-            ),
+            frameColor = colorResource(R.color.camera_frame_color),
+            handlesColor = colorResource(R.color.frame_handles_color),
+            containerSize = screenSize,
             onFrameChange = { frameSize, framePosition ->
                 onEvent(
-                    TextRecognitionEvent.UpdateDimensions(
+                    TextRecognitionEvent.UpdateFrameDimensions(
                         frameSize = frameSize,
-                        framePosition = framePosition,
-                        screenSize = Size(
-                            configuration.screenWidthDp * density.density,
-                            configuration.screenHeightDp * density.density
-                        )
+                        framePosition = framePosition
                     )
                 )
             }
@@ -94,7 +93,14 @@ fun ImagePreviewScreen(
         }
 
         Button(
-            onClick = { onEvent(TextRecognitionEvent.AnalyzeImage) },
+            onClick = {
+                onEvent(
+                    TextRecognitionEvent.AnalyzeImage(
+                        screenSize = screenSize,
+                        onTextRecognized = onTextRecognized
+                    )
+                )
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)

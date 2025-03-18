@@ -60,15 +60,12 @@ fun CameraPreviewScreen(
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.recognizedText) {
-        state.recognizedText?.let(onTextRecognized)
-    }
-
     if (cameraPermissionState.status.isGranted) {
         CameraPreviewContent(
             modifier = modifier,
             state = state,
-            onEvent = viewModel::onEvent
+            onEvent = viewModel::onEvent,
+            onTextRecognized = onTextRecognized
         )
     } else {
         CameraPermissionRequest(
@@ -83,7 +80,8 @@ fun CameraPreviewContent(
     modifier: Modifier = Modifier,
     state: TextRecognitionState,
     onEvent: (TextRecognitionEvent) -> Unit,
-    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+    onTextRecognized: (String) -> Unit
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -165,7 +163,9 @@ fun CameraPreviewContent(
             state.capturedImage?.let { bitmap ->
                 ImagePreviewScreen(
                     imageBitmap = bitmap.asImageBitmap(),
-                    onEvent = onEvent
+                    state = state,
+                    onEvent = onEvent,
+                    onTextRecognized = onTextRecognized
                 )
             }
         }

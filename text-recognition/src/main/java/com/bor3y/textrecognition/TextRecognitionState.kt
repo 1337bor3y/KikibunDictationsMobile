@@ -8,13 +8,11 @@ import androidx.compose.ui.geometry.Size
 data class TextRecognitionState(
     val surfaceRequest: SurfaceRequest? = null,
     val capturedImage: Bitmap? = null,
-    val recognizedText: String? = null,
-    val dimensions: Dimensions? = null,
+    val frameDimensions: FrameDimensions = FrameDimensions(),
     val error: String? = null
 )
 
-data class Dimensions(
-    val frameSize: Size,
-    val framePosition: Offset,
-    val screenSize: Size
+data class FrameDimensions(
+    val size: Size = Size(300f, 200f),
+    val position: Offset = Offset(100f, 200f),
 )

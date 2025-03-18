@@ -13,11 +13,9 @@ sealed interface TextRecognitionEvent {
 
     data object CloseImagePreview : TextRecognitionEvent
 
-    data class UpdateDimensions(
-        val frameSize: Size,
-        val framePosition: Offset,
-        val screenSize: Size
-    ) : TextRecognitionEvent
+    data class UpdateFrameDimensions(val frameSize: Size, val framePosition: Offset) :
+        TextRecognitionEvent
 
-    data object AnalyzeImage: TextRecognitionEvent
+    data class AnalyzeImage(val screenSize: Size, val onTextRecognized: (String) -> Unit) :
+        TextRecognitionEvent
 }
