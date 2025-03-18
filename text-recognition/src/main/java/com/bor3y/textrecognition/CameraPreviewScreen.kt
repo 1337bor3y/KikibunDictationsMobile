@@ -60,7 +60,9 @@ fun CameraPreviewScreen(
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    state.recognizedText?.let(onTextRecognized)
+    LaunchedEffect(state.recognizedText) {
+        state.recognizedText?.let(onTextRecognized)
+    }
 
     if (cameraPermissionState.status.isGranted) {
         CameraPreviewContent(
