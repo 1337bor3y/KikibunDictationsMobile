@@ -96,7 +96,7 @@ fun ImagePreviewScreen(
         Button(
             onClick = {
                 onEvent(
-                    TextRecognitionEvent.AnalyzeImage(
+                    TextRecognitionEvent.GetTextFromImage(
                         screenSize = screenSize,
                         onTextRecognized = onTextRecognized
                     )

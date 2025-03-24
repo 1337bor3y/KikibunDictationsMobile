@@ -65,7 +65,7 @@ class TextRecognitionViewModel @Inject constructor(
                 }
             }
 
-            is TextRecognitionEvent.AnalyzeImage -> analyzeImage(
+            is TextRecognitionEvent.GetTextFromImage -> getTextFromImage(
                 event.screenSize,
                 event.onTextRecognized
             )
@@ -151,7 +151,7 @@ class TextRecognitionViewModel @Inject constructor(
         _state.update { it.copy(capturedImage = null) }
     }
 
-    private fun analyzeImage(screenSize: Size, onTextRecognized: (String) -> Unit) {
+    private fun getTextFromImage(screenSize: Size, onTextRecognized: (String) -> Unit) {
         state.value.capturedImage?.let { capturedImage ->
             getTextFromImage.invoke(
                 imageBitmap = capturedImage,
