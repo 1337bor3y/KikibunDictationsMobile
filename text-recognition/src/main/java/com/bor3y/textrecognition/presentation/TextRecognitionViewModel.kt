@@ -152,34 +152,12 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
 
     private fun analyzeImage(screenSize: Size, onTextRecognized: (String) -> Unit) {
         state.value.capturedImage?.let { capturedImage ->
-            val image = InputImage.fromBitmap(
-                cropBitmap(
-                    imageBitmap = capturedImage,
-                    framePosition = state.value.frameDimensions.position,
-                    frameSize = state.value.frameDimensions.size,
-                    screenSize = screenSize,
-                ),
-                0
+            val image = cropBitmap(
+                imageBitmap = capturedImage,
+                framePosition = state.value.frameDimensions.position,
+                frameSize = state.value.frameDimensions.size,
+                screenSize = screenSize,
             )
-            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-
-            recognizer.process(image)
-                .addOnSuccessListener { visionText ->
-                    onTextRecognized(visionText.text)
-                    _state.update {
-                        it.copy(
-                            error = null
-                        )
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    _state.update {
-                        it.copy(
-                            error = "Failed to analyze the image: " +
-                                    (exception.localizedMessage ?: "Unknown error")
-                        )
-                    }
-                }
         }
     }
 
