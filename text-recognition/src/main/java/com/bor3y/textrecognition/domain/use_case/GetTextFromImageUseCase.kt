@@ -4,19 +4,41 @@ import android.graphics.Bitmap
 import android.graphics.Rect
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import com.bor3y.textrecognition.domain.model.Resource
 import com.bor3y.textrecognition.domain.repository.TextRecognizerRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetTextFromImageUseCase @Inject constructor(
     private val recognizerRepository: TextRecognizerRepository
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         imageBitmap: Bitmap,
-        onTextRecognized: (String) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-
-    }
+        framePosition: Offset,
+        frameSize: Size,
+        screenSize: Size
+    ): Flow<Resource<String>> =
+        flow {
+            try {
+                emit(Resource.Loading())
+                val croppedImage = cropBitmap(
+                    imageBitmap = imageBitmap,
+                    framePosition = framePosition,
+                    frameSize = frameSize,
+                    screenSize = screenSize
+                )
+                val text = recognizerRepository.getTextFromImage(croppedImage)
+                emit(Resource.Success(text))
+            } catch (e: Exception) {
+                emit(
+                    Resource.Error(
+                        "Failed to analyze the image: " +
+                                (e.localizedMessage ?: "Unknown error")
+                    )
+                )
+            }
+        }
 
     private fun cropBitmap(
         imageBitmap: Bitmap,
