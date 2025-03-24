@@ -152,12 +152,16 @@ fun CameraPreviewContent(
                 modifier = Modifier
                     .align(if (isLandscape()) Alignment.CenterEnd else Alignment.BottomCenter)
                     .padding(16.dp)
+                    .size(64.dp)
                     .background(Color.White, shape = CircleShape),
                 onClick = {
                     onEvent(TextRecognitionEvent.TakePhoto)
                 }
             ) {
                 Icon(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = stringResource(R.string.take_photo_button_text)
                 )
