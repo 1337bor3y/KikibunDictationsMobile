@@ -19,15 +19,18 @@ import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
+import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class TextRecognitionViewModel : ViewModel() {
+@HiltViewModel
+class TextRecognitionViewModel @Inject constructor() : ViewModel() {
     private val _state = MutableStateFlow(TextRecognitionState())
     val state = _state.asStateFlow()
 

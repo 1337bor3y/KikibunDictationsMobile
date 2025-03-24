@@ -40,10 +40,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -54,7 +54,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 @Composable
 fun CameraPreviewScreen(
     modifier: Modifier = Modifier,
-    viewModel: TextRecognitionViewModel = viewModel(),
+    viewModel: TextRecognitionViewModel = hiltViewModel(),
     onTextRecognized: (String) -> Unit
 ) {
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
