@@ -8,11 +8,9 @@ import javax.inject.Inject
 class TextRecognizerRepositoryImpl @Inject constructor(
     private val imageTextRecognizer: ImageTextRecognizer
 ) : TextRecognizerRepository {
-    override fun getTextFromImage(
-        imageBitmap: Bitmap,
-        onTextRecognized: (String) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        imageTextRecognizer.getTextFromImage(imageBitmap, onTextRecognized, onFailure)
+    override suspend fun getTextFromImage(
+        imageBitmap: Bitmap
+    ): String {
+        return imageTextRecognizer.getTextFromImage(imageBitmap)
     }
 }
