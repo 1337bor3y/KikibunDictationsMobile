@@ -1,4 +1,4 @@
-package com.bor3y.textrecognition.data
+package com.bor3y.textrecognition.data.recognizer
 
 import android.graphics.Bitmap
 

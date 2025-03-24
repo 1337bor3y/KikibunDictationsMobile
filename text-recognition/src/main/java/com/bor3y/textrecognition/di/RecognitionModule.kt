@@ -1,7 +1,7 @@
 package com.bor3y.textrecognition.di
 
-import com.bor3y.textrecognition.data.ImageTextRecognizer
-import com.bor3y.textrecognition.data.MLKitTextRecognizer
+import com.bor3y.textrecognition.data.recognizer.ImageTextRecognizer
+import com.bor3y.textrecognition.data.recognizer.MLKitTextRecognizer
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

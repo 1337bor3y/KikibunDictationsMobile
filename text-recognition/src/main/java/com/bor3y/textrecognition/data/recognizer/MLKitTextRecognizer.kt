@@ -1,11 +1,12 @@
-package com.bor3y.textrecognition.data
+package com.bor3y.textrecognition.data.recognizer
 
 import android.graphics.Bitmap
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import javax.inject.Inject
 
-class MLKitTextRecognizer : ImageTextRecognizer {
+class MLKitTextRecognizer @Inject constructor() : ImageTextRecognizer {
     override fun getTextFromImage(
         imageBitmap: Bitmap,
         onTextRecognized: (String) -> Unit,
