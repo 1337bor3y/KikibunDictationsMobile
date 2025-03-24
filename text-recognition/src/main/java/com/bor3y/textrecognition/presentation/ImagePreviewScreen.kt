@@ -1,4 +1,4 @@
-package com.bor3y.textrecognition
+package com.bor3y.textrecognition.presentation
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.bor3y.textrecognition.R
 
 @Composable
 fun ImagePreviewScreen(

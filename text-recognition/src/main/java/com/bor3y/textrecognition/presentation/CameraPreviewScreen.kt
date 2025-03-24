@@ -1,4 +1,4 @@
-package com.bor3y.textrecognition
+package com.bor3y.textrecognition.presentation
 
 import android.content.res.Configuration
 import androidx.camera.compose.CameraXViewfinder
@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bor3y.textrecognition.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted

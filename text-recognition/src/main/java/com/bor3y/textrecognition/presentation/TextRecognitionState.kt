@@ -1,4 +1,4 @@
-package com.bor3y.textrecognition
+package com.bor3y.textrecognition.presentation
 
 import android.graphics.Bitmap
 import androidx.camera.core.SurfaceRequest

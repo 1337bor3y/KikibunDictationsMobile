@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.bor3y.kikibundictations.ui.theme.KikibunDictationsTheme
-import com.bor3y.textrecognition.CameraPreviewScreen
+import com.bor3y.textrecognition.presentation.CameraPreviewScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
