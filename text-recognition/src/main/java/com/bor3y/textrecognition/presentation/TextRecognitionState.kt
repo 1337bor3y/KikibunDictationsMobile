@@ -9,6 +9,7 @@ data class TextRecognitionState(
     val surfaceRequest: SurfaceRequest? = null,
     val capturedImage: Bitmap? = null,
     val frameDimensions: FrameDimensions = FrameDimensions(),
+    val isLoading: Boolean = false,
     val error: String? = null
 )
 

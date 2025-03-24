@@ -13,7 +13,7 @@ import javax.inject.Inject
 class GetTextFromImageUseCase @Inject constructor(
     private val recognizerRepository: TextRecognizerRepository
 ) {
-    suspend operator fun invoke(
+    operator fun invoke(
         imageBitmap: Bitmap,
         framePosition: Offset,
         frameSize: Size,
@@ -30,11 +30,11 @@ class GetTextFromImageUseCase @Inject constructor(
                 )
                 val text = recognizerRepository.getTextFromImage(croppedImage)
                 emit(Resource.Success(text))
-            } catch (e: Exception) {
+            } catch (exception: Exception) {
                 emit(
                     Resource.Error(
                         "Failed to analyze the image: " +
-                                (e.localizedMessage ?: "Unknown error")
+                                (exception.localizedMessage ?: "Unknown error")
                     )
                 )
             }

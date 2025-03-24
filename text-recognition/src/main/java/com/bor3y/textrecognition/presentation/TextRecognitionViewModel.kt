@@ -14,10 +14,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bor3y.textrecognition.domain.model.Resource
+import com.bor3y.textrecognition.domain.use_case.GetTextFromImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
@@ -25,7 +29,9 @@ import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
-class TextRecognitionViewModel @Inject constructor() : ViewModel() {
+class TextRecognitionViewModel @Inject constructor(
+    private val getTextFromImage: GetTextFromImageUseCase
+) : ViewModel() {
     private val _state = MutableStateFlow(TextRecognitionState())
     val state = _state.asStateFlow()
 
@@ -147,6 +153,33 @@ class TextRecognitionViewModel @Inject constructor() : ViewModel() {
 
     private fun analyzeImage(screenSize: Size, onTextRecognized: (String) -> Unit) {
         state.value.capturedImage?.let { capturedImage ->
+            getTextFromImage.invoke(
+                imageBitmap = capturedImage,
+                frameSize = state.value.frameDimensions.size,
+                framePosition = state.value.frameDimensions.position,
+                screenSize = screenSize
+            ).onEach { result ->
+                when (result) {
+                    is Resource.Error -> _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.errorMessage
+                        )
+                    }
+
+                    is Resource.Loading -> _state.update {
+                        it.copy(
+                            isLoading = true,
+                            error = null
+                        )
+                    }
+
+                    is Resource.Success -> {
+                        _state.update { it.copy(isLoading = false) }
+                        result.data?.let(onTextRecognized)
+                    }
+                }
+            }.launchIn(viewModelScope)
         }
     }
 }

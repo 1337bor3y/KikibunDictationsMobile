@@ -29,7 +29,7 @@ class MLKitTextRecognizer @Inject constructor() : ImageTextRecognizer {
     private suspend fun <T> Task<T>.await(): T {
         return suspendCoroutine { continuation ->
             addOnSuccessListener { result -> continuation.resume(result) }
-            addOnFailureListener { e -> continuation.resumeWithException(e) }
+            addOnFailureListener { exception -> continuation.resumeWithException(exception) }
         }
     }
 }
