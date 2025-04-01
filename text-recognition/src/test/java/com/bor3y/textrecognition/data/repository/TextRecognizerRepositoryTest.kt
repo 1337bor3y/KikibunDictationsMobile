@@ -9,7 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class TextRecognizerRepositoryImplTest {
+class TextRecognizerRepositoryTest {
 
     private lateinit var textRecognizerRepository: TextRecognizerRepositoryImpl
     private val imageTextRecognizer: ImageTextRecognizer = mockk()
