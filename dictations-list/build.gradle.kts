@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.bor3y.dictations_list"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 28
@@ -61,4 +61,7 @@ dependencies {
     // Paging
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.androidx.paging.compose)
+
+    // Include core module
+    implementation(project(":core"))
 }
