@@ -4,8 +4,8 @@ import com.bor3y.core.config.ApiConfig
 import com.bor3y.core.data.remote.dto.DictationItemDto
 import retrofit2.http.GET
 
-interface DictationsApi {
+interface DictationApi {
 
-    @GET(ApiConfig.LIST_ENDPOINT)
-    suspend fun getDictationsList(): List<Result<DictationItemDto>>
+    @GET(ApiConfig.DICTATIONS_LIST_ENDPOINT)
+    suspend fun getDictations(): List<Result<DictationItemDto>>
 }
