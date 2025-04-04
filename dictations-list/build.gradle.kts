@@ -40,24 +40,12 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.runtime)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
-
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-
-    // Room
-    implementation( libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.paging)
 
     // Paging
     implementation(libs.androidx.paging.runtime.ktx)
