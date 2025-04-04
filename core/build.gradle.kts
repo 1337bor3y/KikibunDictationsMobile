@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.bor3y.core"
-    compileSdk = 34
+    compileSdk = 35
 
     buildFeatures {
         buildConfig = true
@@ -44,4 +44,5 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.runtime)
 }
