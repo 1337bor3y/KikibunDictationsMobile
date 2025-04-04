@@ -1,4 +1,4 @@
-package com.bor3y.core.local.entity
+package com.bor3y.core.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

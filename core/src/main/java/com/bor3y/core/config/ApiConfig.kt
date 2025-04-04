@@ -1,4 +1,6 @@
-package com.bor3y.core
+package com.bor3y.core.config
+
+import com.bor3y.core.BuildConfig
 
 object ApiConfig {
     const val BASE_URL = BuildConfig.BASE_URL
