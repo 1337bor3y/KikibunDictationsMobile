@@ -46,12 +46,16 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.runtime)
 
-    // Unit Testing
-    testImplementation(libs.junit)
+    // Testing
+    testImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
+    // Coroutines testing
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
 
     // Hilt
     implementation(libs.hilt.android)

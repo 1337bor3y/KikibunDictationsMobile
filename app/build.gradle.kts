@@ -64,8 +64,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.runtime)
 
-    // Unit & UI Testing
-    testImplementation(libs.junit)
+    // Testing
+    testImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
