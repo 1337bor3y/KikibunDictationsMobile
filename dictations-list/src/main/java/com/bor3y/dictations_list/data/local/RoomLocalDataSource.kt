@@ -20,7 +20,7 @@ class RoomLocalDataSource @Inject constructor(
         return dao.getDictations().map { list -> list.map { it.toLocal() } }
     }
 
-    override suspend fun deleteDictations(dictations: List<DictationItemLocal>) {
-        dao.deleteDictations(dictations.map { it.toEntity() })
+    override suspend fun deleteAllDictations() {
+        dao.deleteAllDictations()
     }
 }

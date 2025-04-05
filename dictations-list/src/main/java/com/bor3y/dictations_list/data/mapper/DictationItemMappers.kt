@@ -26,7 +26,7 @@ fun DictationItemDto.toRemote() = DictationItemRemote(
     title = title
 )
 
-fun DictationItemRemote.toRemote() = DictationItemDto(
+fun DictationItemRemote.toDto() = DictationItemDto(
     createdAt = createdAt,
     englishLevel = englishLevel,
     id = id,
