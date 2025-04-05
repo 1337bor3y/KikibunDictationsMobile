@@ -20,4 +20,7 @@ interface DictationsListDao {
 
     @Query("DELETE FROM dictationitementity")
     suspend fun deleteAllDictations()
+
+    @Query("DELETE FROM dictationitementity WHERE id IN (SELECT id FROM dictationitementity ORDER BY created_at ASC LIMIT :limit)")
+    suspend fun deleteOldestDictations(limit: Int)
 }

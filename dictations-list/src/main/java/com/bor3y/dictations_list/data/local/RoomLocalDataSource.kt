@@ -20,7 +20,15 @@ class RoomLocalDataSource @Inject constructor(
         return dao.getDictations().map { list -> list.map { it.toLocal() } }
     }
 
+    override suspend fun getDictationsCount(): Int {
+        return dao.getDictationsCount()
+    }
+
     override suspend fun deleteAllDictations() {
         dao.deleteAllDictations()
+    }
+
+    override suspend fun deleteOldestDictations(count: Int) {
+        dao.deleteOldestDictations(limit = count)
     }
 }

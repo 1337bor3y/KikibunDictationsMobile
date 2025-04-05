@@ -9,5 +9,9 @@ interface LocalDataSource {
 
     fun getDictations(): Flow<List<DictationItemLocal>>
 
+    suspend fun getDictationsCount(): Int
+
     suspend fun deleteAllDictations()
+
+    suspend fun deleteOldestDictations(count: Int)
 }
