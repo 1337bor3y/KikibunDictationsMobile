@@ -51,6 +51,9 @@ dependencies {
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.androidx.paging.compose)
 
+    // Worker
+    implementation(libs.androidx.work.runtime.ktx)
+
     // Include core module
     implementation(project(":core"))
 }
