@@ -2,7 +2,7 @@ package com.bor3y.core.di
 
 import android.content.Context
 import androidx.room.Room
-import com.bor3y.core.config.DatabaseConfig
+import com.bor3y.core.until.DatabaseConfig
 import com.bor3y.core.data.local.DictationDatabase
 import com.bor3y.core.data.local.DictationsListDao
 import dagger.Module

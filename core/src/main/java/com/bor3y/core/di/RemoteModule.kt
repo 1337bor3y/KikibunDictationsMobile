@@ -1,6 +1,6 @@
 package com.bor3y.core.di
 
-import com.bor3y.core.config.ApiConfig
+import com.bor3y.core.until.ApiConfig
 import com.bor3y.core.data.remote.DictationApi
 import dagger.Module
 import dagger.Provides

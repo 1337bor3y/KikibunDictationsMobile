@@ -1,4 +1,4 @@
-package com.bor3y.core.config
+package com.bor3y.core.until
 
 import com.bor3y.core.BuildConfig
 
