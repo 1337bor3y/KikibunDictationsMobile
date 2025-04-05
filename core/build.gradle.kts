@@ -48,6 +48,11 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.runtime)
 
+    // Unit Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
