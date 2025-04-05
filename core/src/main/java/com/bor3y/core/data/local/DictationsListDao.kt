@@ -15,6 +15,9 @@ interface DictationsListDao {
     @Query("SELECT * FROM dictationitementity")
     fun getDictations(): Flow<List<DictationItemEntity>>
 
+    @Query("SELECT COUNT(*) FROM dictationitementity")
+    suspend fun getDictationsCount(): Int
+
     @Query("DELETE FROM dictationitementity")
     suspend fun deleteAllDictations()
 }
