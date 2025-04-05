@@ -53,14 +53,15 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.runtime)
 
-    // Unit & UI Testing
+    // Unit Testing
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    // MockK
+    testImplementation(libs.mockk)
+    // Coroutines testing
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
 
     // CameraX
     implementation(libs.androidx.camera.core)
@@ -81,11 +82,4 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
-
-    // MockK
-    testImplementation(libs.mockk)
-
-    // Coroutines testing
-    testImplementation(libs.turbine)
-    testImplementation(libs.kotlinx.coroutines.test)
 }
