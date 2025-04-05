@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class RetrofitDataSource @Inject constructor(
     private val api: DictationApi
-): RemoteDataSource {
+) : RemoteDataSource {
 
     override suspend fun getDictations(): Result<List<DictationItemRemote>> {
         return api.getDictations().map { list -> list.map { it.toRemote() } }
