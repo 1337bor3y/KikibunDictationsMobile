@@ -12,15 +12,15 @@ interface DictationsListDao {
     @Upsert
     suspend fun upsertDictations(dictations: List<DictationEntity>)
 
-    @Query("SELECT * FROM dictationitementity")
+    @Query("SELECT * FROM dictations")
     fun getDictations(): Flow<List<DictationEntity>>
 
-    @Query("SELECT COUNT(*) FROM dictationitementity")
+    @Query("SELECT COUNT(*) FROM dictations")
     suspend fun getDictationsCount(): Int
 
-    @Query("DELETE FROM dictationitementity")
+    @Query("DELETE FROM dictations")
     suspend fun deleteAllDictations()
 
-    @Query("DELETE FROM dictationitementity WHERE id IN (SELECT id FROM dictationitementity ORDER BY created_at ASC LIMIT :limit)")
+    @Query("DELETE FROM dictations WHERE id IN (SELECT id FROM dictations ORDER BY created_at ASC LIMIT :limit)")
     suspend fun deleteOldestDictations(limit: Int)
 }
