@@ -8,8 +8,9 @@ import com.bor3y.core.until.Constants
 import com.bor3y.dictations_list.data.local.LocalDataSource
 import com.bor3y.dictations_list.data.mapper.toLocal
 import com.bor3y.dictations_list.data.remote.RemoteDataSource
+import javax.inject.Inject
 
-class FetchRemoteDataWorker(
+class FetchRemoteDataWorker @Inject constructor(
     appContext: Context,
     params: WorkerParameters,
     private val remoteDataSource: RemoteDataSource,
