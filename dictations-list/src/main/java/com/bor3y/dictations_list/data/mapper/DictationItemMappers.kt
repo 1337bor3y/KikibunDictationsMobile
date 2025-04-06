@@ -1,41 +1,45 @@
 package com.bor3y.dictations_list.data.mapper
 
-import com.bor3y.core.data.local.entity.DictationItemEntity
+import com.bor3y.core.data.local.entity.DictationEntity
+import com.bor3y.core.data.remote.dto.DictationDetailDto
 import com.bor3y.core.data.remote.dto.DictationItemDto
-import com.bor3y.dictations_list.data.local.model.DictationItemLocal
+import com.bor3y.dictations_list.data.local.model.DictationLocal
+import com.bor3y.dictations_list.data.remote.model.DictationDetailRemote
 import com.bor3y.dictations_list.data.remote.model.DictationItemRemote
 
-fun DictationItemLocal.toEntity() = DictationItemEntity(
+fun DictationLocal.toEntity() = DictationEntity(
+    id = id,
+    title = title,
+    text = text,
+    audioFileDictation = audioFileDictation,
+    audioFileNormal = audioFileNormal,
     createdAt = createdAt,
     englishLevel = englishLevel,
-    id = id,
-    title = title
 )
 
-fun DictationItemEntity.toLocal() = DictationItemLocal(
+fun DictationEntity.toLocal() = DictationLocal(
+    id = id,
+    title = title,
+    text = text,
+    audioFileDictation = audioFileDictation,
+    audioFileNormal = audioFileNormal,
     createdAt = createdAt,
     englishLevel = englishLevel,
-    id = id,
-    title = title
 )
 
 fun DictationItemDto.toRemote() = DictationItemRemote(
+    id = id,
+    title = title,
     createdAt = createdAt,
     englishLevel = englishLevel,
-    id = id,
-    title = title
 )
 
-fun DictationItemRemote.toDto() = DictationItemDto(
+fun DictationDetailDto.toRemote() = DictationDetailRemote(
+    id = id,
+    title = title,
+    text = text,
+    audioFileDictation = audioFileDictation,
+    audioFileNormal = audioFileNormal,
     createdAt = createdAt,
     englishLevel = englishLevel,
-    id = id,
-    title = title
-)
-
-fun DictationItemRemote.toLocal() = DictationItemLocal(
-    createdAt = createdAt,
-    englishLevel = englishLevel,
-    id = id,
-    title = title
 )

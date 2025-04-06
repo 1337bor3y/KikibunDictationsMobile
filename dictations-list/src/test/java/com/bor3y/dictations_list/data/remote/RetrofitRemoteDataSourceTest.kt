@@ -3,7 +3,6 @@ package com.bor3y.dictations_list.data.remote
 import com.bor3y.core.data.remote.DictationApi
 import com.bor3y.core.data.remote.dto.DictationItemDto
 import com.bor3y.dictations_list.data.mapper.toDto
-import com.bor3y.dictations_list.data.remote.model.DictationItemRemote
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

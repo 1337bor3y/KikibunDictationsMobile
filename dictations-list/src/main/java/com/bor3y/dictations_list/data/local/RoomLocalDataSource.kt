@@ -1,7 +1,7 @@
 package com.bor3y.dictations_list.data.local
 
 import com.bor3y.core.data.local.DictationsListDao
-import com.bor3y.dictations_list.data.local.model.DictationItemLocal
+import com.bor3y.dictations_list.data.local.model.DictationLocal
 import com.bor3y.dictations_list.data.mapper.toEntity
 import com.bor3y.dictations_list.data.mapper.toLocal
 import kotlinx.coroutines.flow.Flow
@@ -12,11 +12,11 @@ class RoomLocalDataSource @Inject constructor(
     private val dao: DictationsListDao
 ) : LocalDataSource {
 
-    override suspend fun upsertDictations(dictations: List<DictationItemLocal>) {
+    override suspend fun upsertDictations(dictations: List<DictationLocal>) {
         dao.upsertDictations(dictations.map { it.toEntity() })
     }
 
-    override fun getDictations(): Flow<List<DictationItemLocal>> {
+    override fun getDictations(): Flow<List<DictationLocal>> {
         return dao.getDictations().map { list -> list.map { it.toLocal() } }
     }
 

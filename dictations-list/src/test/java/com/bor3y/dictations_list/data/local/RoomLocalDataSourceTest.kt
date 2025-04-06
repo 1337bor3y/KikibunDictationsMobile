@@ -1,8 +1,8 @@
 package com.bor3y.dictations_list.data.local
 
 import com.bor3y.core.data.local.DictationsListDao
-import com.bor3y.core.data.local.entity.DictationItemEntity
-import com.bor3y.dictations_list.data.local.model.DictationItemLocal
+import com.bor3y.core.data.local.entity.DictationEntity
+import com.bor3y.dictations_list.data.local.model.DictationLocal
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -28,7 +28,7 @@ class RoomLocalDataSourceTest {
     @Test
     fun `upsertDictations should call dao upsertDictations`() = runTest {
         // Arrange: Create a list of mocked DictationItemLocal objects to pass to the upsert method
-        val dictations = listOf(mockk<DictationItemLocal>(relaxed = true))
+        val dictations = listOf(mockk<DictationLocal>(relaxed = true))
 
         // Act: Call the upsertDictations method of the data source
         dataSource.upsertDictations(dictations)
@@ -40,7 +40,7 @@ class RoomLocalDataSourceTest {
     @Test
     fun `getDictations should return flow of dictations`() = runTest {
         // Arrange: Create a mock instance of DictationItemEntity
-        val entity = mockk<DictationItemEntity>(relaxed = true)
+        val entity = mockk<DictationEntity>(relaxed = true)
 
         // Mock dao.getDictations() to return a flow containing a list with the mocked entity
         every { dao.getDictations() } returns flowOf(listOf(entity))

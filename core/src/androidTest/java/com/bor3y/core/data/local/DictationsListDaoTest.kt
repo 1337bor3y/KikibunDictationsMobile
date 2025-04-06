@@ -3,7 +3,7 @@ package com.bor3y.core.data.local
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.bor3y.core.data.local.entity.DictationItemEntity
+import com.bor3y.core.data.local.entity.DictationEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -39,7 +39,7 @@ class DictationsListDaoTest {
     fun testUpsertAndGetDictations() = runTest {
         // Arrange: Prepare mock data
         val dictations = listOf(
-            DictationItemEntity(
+            DictationEntity(
                 id = "64220988-c192-45f5-88a3-f5054b166445",
                 title = "New Ways to See",
                 createdAt = "2025-03-24 14:30:58",
@@ -61,7 +61,7 @@ class DictationsListDaoTest {
     fun testGetDictationsCount() = runTest {
         // Arrange: Insert some dictations
         val dictations = listOf(
-            DictationItemEntity(
+            DictationEntity(
                 id = "64220988-c192-45f5-88a3-f5054b166445",
                 title = "New Ways to See",
                 createdAt = "2025-03-24 14:30:58",
@@ -81,7 +81,7 @@ class DictationsListDaoTest {
     fun testDeleteAllDictations() = runTest {
         // Arrange: Insert some dictations
         val dictations = listOf(
-            DictationItemEntity(
+            DictationEntity(
                 id = "64220988-c192-45f5-88a3-f5054b166445",
                 title = "New Ways to See",
                 createdAt = "2025-03-24 14:30:58",
@@ -102,13 +102,13 @@ class DictationsListDaoTest {
     fun testDeleteOldestDictations() = runTest {
         // Arrange: Insert multiple dictations with different created_at values
         val dictations = listOf(
-            DictationItemEntity(id = "1", title = "Title 1", createdAt = "2025-03-01 14:30:58", englishLevel = "A1"),
-            DictationItemEntity(id = "2", title = "Title 2", createdAt = "2025-03-02 14:30:58", englishLevel = "A2"),
-            DictationItemEntity(id = "3", title = "Title 3", createdAt = "2025-03-03 14:30:58", englishLevel = "B1"),
-            DictationItemEntity(id = "4", title = "Title 4", createdAt = "2025-03-04 14:30:58", englishLevel = "B2"),
-            DictationItemEntity(id = "5", title = "Title 5", createdAt = "2025-03-05 14:30:58", englishLevel = "C1"),
-            DictationItemEntity(id = "6", title = "Title 6", createdAt = "2025-03-06 14:30:58", englishLevel = "C2"),
-            DictationItemEntity(id = "7", title = "Title 7", createdAt = "2025-03-07 14:30:58", englishLevel = "A1")
+            DictationEntity(id = "1", title = "Title 1", createdAt = "2025-03-01 14:30:58", englishLevel = "A1"),
+            DictationEntity(id = "2", title = "Title 2", createdAt = "2025-03-02 14:30:58", englishLevel = "A2"),
+            DictationEntity(id = "3", title = "Title 3", createdAt = "2025-03-03 14:30:58", englishLevel = "B1"),
+            DictationEntity(id = "4", title = "Title 4", createdAt = "2025-03-04 14:30:58", englishLevel = "B2"),
+            DictationEntity(id = "5", title = "Title 5", createdAt = "2025-03-05 14:30:58", englishLevel = "C1"),
+            DictationEntity(id = "6", title = "Title 6", createdAt = "2025-03-06 14:30:58", englishLevel = "C2"),
+            DictationEntity(id = "7", title = "Title 7", createdAt = "2025-03-07 14:30:58", englishLevel = "A1")
         )
         dao.upsertDictations(dictations)
 

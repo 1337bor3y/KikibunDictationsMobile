@@ -1,6 +1,6 @@
-package com.bor3y.dictations_list.data.local.model
+package com.bor3y.dictations_list.data.remote.model
 
-data class DictationItemLocal(
+data class DictationItemRemote(
     val createdAt: String,
     val englishLevel: String,
     val id: String,
