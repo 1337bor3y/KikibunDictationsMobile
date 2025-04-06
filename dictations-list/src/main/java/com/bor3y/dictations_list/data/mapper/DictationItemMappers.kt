@@ -43,3 +43,13 @@ fun DictationDetailDto.toRemote() = DictationDetailRemote(
     createdAt = createdAt,
     englishLevel = englishLevel,
 )
+
+fun DictationDetailRemote.toLocal() = DictationLocal(
+    id = id,
+    title = title,
+    text = text,
+    audioFileDictation = audioFileDictation,
+    audioFileNormal = audioFileNormal,
+    createdAt = createdAt,
+    englishLevel = englishLevel,
+)
