@@ -4,6 +4,8 @@ import com.bor3y.dictations_list.data.local.LocalDataSource
 import com.bor3y.dictations_list.data.local.RoomLocalDataSource
 import com.bor3y.dictations_list.data.remote.RemoteDataSource
 import com.bor3y.dictations_list.data.remote.RetrofitRemoteDataSource
+import com.bor3y.dictations_list.data.worker.DataSyncManager
+import com.bor3y.dictations_list.data.worker.RemoteLocalDataSyncManager
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class InterfaceModule {
+abstract class DictationsListModule {
 
     @Binds
     @Singleton
@@ -25,4 +27,10 @@ abstract class InterfaceModule {
     abstract fun provideRemoteDataSource(
         retrofitRemoteDataSource: RetrofitRemoteDataSource
     ): RemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun provideDataSyncManager(
+        remoteLocalDataSyncManager: RemoteLocalDataSyncManager
+    ): DataSyncManager
 }
