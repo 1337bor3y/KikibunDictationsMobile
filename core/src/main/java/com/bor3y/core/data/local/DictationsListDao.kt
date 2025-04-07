@@ -23,4 +23,7 @@ interface DictationsListDao {
 
     @Query("DELETE FROM dictations WHERE id IN (SELECT id FROM dictations ORDER BY created_at ASC LIMIT :limit)")
     suspend fun deleteOldestDictations(limit: Int)
+
+    @Query("SELECT * FROM dictations ORDER BY created_at ASC LIMIT :limit")
+    suspend fun getOldestDictations(limit: Int): List<DictationEntity>
 }

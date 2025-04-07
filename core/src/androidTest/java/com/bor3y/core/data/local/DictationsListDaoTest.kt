@@ -185,4 +185,47 @@ class DictationsListDaoTest {
         assertEquals(1, remainingDictations.size)
         assertEquals("Title 7", remainingDictations[0].title)
     }
+
+    @Test
+    fun testGetOldestDictations() = runTest {
+        // Arrange: Insert multiple dictations with different created_at values
+        val dictations = listOf(
+            DictationEntity(
+                id = "1",
+                title = "Title 1",
+                text = "text",
+                audioFileDictation = "audioFileDictation",
+                audioFileNormal = "audioFileNormal",
+                createdAt = "2025-03-01 14:30:58",
+                englishLevel = "A1"
+            ),
+            DictationEntity(
+                id = "2",
+                title = "Title 2",
+                text = "text",
+                audioFileDictation = "audioFileDictation",
+                audioFileNormal = "audioFileNormal",
+                createdAt = "2025-03-02 14:30:58",
+                englishLevel = "A2"
+            ),
+            DictationEntity(
+                id = "3",
+                title = "Title 3",
+                text = "text",
+                audioFileDictation = "audioFileDictation",
+                audioFileNormal = "audioFileNormal",
+                createdAt = "2025-03-03 14:30:58",
+                englishLevel = "B1"
+            )
+        )
+        dao.upsertDictations(dictations)
+
+        // Act: Get the 2 oldest dictations
+        val result = dao.getOldestDictations(2)
+
+        // Assert: Verify that the oldest dictations are returned (based on createdAt)
+        assertEquals(2, result.size)
+        assertEquals("Title 1", result[0].title)  // Oldest
+        assertEquals("Title 2", result[1].title)  // Second oldest
+    }
 }

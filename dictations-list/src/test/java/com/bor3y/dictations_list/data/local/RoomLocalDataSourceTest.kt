@@ -93,4 +93,24 @@ class RoomLocalDataSourceTest {
             // Assert: Verify that the DAO's deleteOldestDictations method was called with the correct limit
             coVerify { dao.deleteOldestDictations(limit = count) }
         }
+
+    @Test
+    fun `getOldestDictations should return a list of dictations`() = runTest {
+        // Arrange: Create a list of mocked DictationEntity objects to simulate the database response
+        val entity1 = mockk<DictationEntity>(relaxed = true)
+        val entity2 = mockk<DictationEntity>(relaxed = true)
+
+        // Mock dao.getOldestDictations() to return a flow with the mocked entities
+        coEvery { dao.getOldestDictations(2) } returns listOf(entity1, entity2)
+
+        // Act: Call the getOldestDictations method of the data source
+        val result = dataSource.getOldestDictations(2)
+
+        // Assert: Verify that the result is a list with the expected size (2 items in this case)
+        assertEquals(2, result.size)
+
+        // Verify: Ensure that the DAO's getOldestDictations method was called with the correct argument
+        coVerify { dao.getOldestDictations(2) }
+    }
+
 }

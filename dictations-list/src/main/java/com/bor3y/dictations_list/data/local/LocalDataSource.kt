@@ -14,4 +14,6 @@ interface LocalDataSource {
     suspend fun deleteAllDictations()
 
     suspend fun deleteOldestDictations(count: Int)
+
+    suspend fun getOldestDictations(count: Int): List<DictationLocal>
 }
