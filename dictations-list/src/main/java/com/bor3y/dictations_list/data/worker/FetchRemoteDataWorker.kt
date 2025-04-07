@@ -23,12 +23,13 @@ class FetchRemoteDataWorker @Inject constructor(
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
-            
+
             val remoteListResult = remoteDataSource.getDictations()
             if (remoteListResult.isFailure) {
                 logError(
-                    "Dictation list error: " + (remoteListResult.exceptionOrNull()?.localizedMessage
-                        ?: "Unknown error")
+                    Constants.LogErrors.DICTATIONS_LIST_SERVER_ERROR.name,
+                    remoteListResult.exceptionOrNull()?.localizedMessage
+                        ?: "Unknown error"
                 )
                 return@withContext Result.failure()
             }
@@ -42,8 +43,9 @@ class FetchRemoteDataWorker @Inject constructor(
                     val remoteDetailResult = remoteDataSource.getDictationDetail(it.id)
                     remoteDetailResult.exceptionOrNull()?.let { exception ->
                         logError(
-                            "Dictation detail error: " + (exception.localizedMessage
-                                ?: "Unknown error")
+                            Constants.LogErrors.DICTATIONS_DETAIL_SERVER_ERROR.name,
+                            exception.localizedMessage
+                                ?: "Unknown error"
                         )
                         return@withContext Result.failure()
                     }
@@ -56,17 +58,20 @@ class FetchRemoteDataWorker @Inject constructor(
                 return@withContext Result.success()
             }
 
-            logError("No data received from the remote server")
+            logError(
+                Constants.LogErrors.DICTATIONS_LIST_SERVER_ERROR.name,
+                "No data received from the remote server"
+            )
             return@withContext Result.failure()
         }
     }
 
-    private fun logError(error: String) {
+    private fun logError(tag: String, msg: String) {
         val currentTime = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val formattedTime = currentTime.format(formatter)
 
         // Later log with Firebase Crashlytics
-        Log.d(Constants.LogErrors.WORKER_ERROR.name, "$formattedTime: $error")
+        Log.d(tag, "$formattedTime: $msg")
     }
 }
