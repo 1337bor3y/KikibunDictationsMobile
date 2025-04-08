@@ -6,6 +6,7 @@ import com.bor3y.core.data.remote.dto.DictationItemDto
 import com.bor3y.dictations_list.data.local.model.DictationLocal
 import com.bor3y.dictations_list.data.remote.model.DictationDetailRemote
 import com.bor3y.dictations_list.data.remote.model.DictationItemRemote
+import com.bor3y.dictations_list.domain.model.Dictation
 
 fun DictationLocal.toEntity() = DictationEntity(
     id = id,
@@ -45,6 +46,16 @@ fun DictationDetailDto.toRemote() = DictationDetailRemote(
 )
 
 fun DictationDetailRemote.toLocal() = DictationLocal(
+    id = id,
+    title = title,
+    text = text,
+    audioFileDictation = audioFileDictation,
+    audioFileNormal = audioFileNormal,
+    createdAt = createdAt,
+    englishLevel = englishLevel,
+)
+
+fun DictationLocal.toDomain() = Dictation(
     id = id,
     title = title,
     text = text,

@@ -4,8 +4,10 @@ import com.bor3y.dictations_list.data.local.LocalDataSource
 import com.bor3y.dictations_list.data.local.RoomLocalDataSource
 import com.bor3y.dictations_list.data.remote.RemoteDataSource
 import com.bor3y.dictations_list.data.remote.RetrofitRemoteDataSource
+import com.bor3y.dictations_list.data.repository.DictationsListRepositoryImpl
 import com.bor3y.dictations_list.data.worker.sync_manager.DataSyncManager
 import com.bor3y.dictations_list.data.worker.sync_manager.RemoteLocalDataSyncManager
+import com.bor3y.dictations_list.domain.repository.DictationsListRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,10 @@ abstract class DictationsListModule {
     abstract fun provideDataSyncManager(
         remoteLocalDataSyncManager: RemoteLocalDataSyncManager
     ): DataSyncManager
+
+    @Binds
+    @Singleton
+    abstract fun provideDictationsListRepository(
+        dictationsListRepositoryImpl: DictationsListRepositoryImpl
+    ): DictationsListRepository
 }

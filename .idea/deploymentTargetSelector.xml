@@ -5,7 +5,7 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="IternalStorageAudioFileManagerTest">
+      <SelectionState runConfigName="Tests in 'com.bor3y.core.data.local'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -11,4 +11,6 @@ object Constants {
     const val OLDEST_DICTATIONS_DELETE_COUNT = 6
     const val DICTATIONS_LIST_PAGE_SIZE = 10
     const val DICTATIONS_LIST_INITIAL_LOAD_SIZE = 20
+    const val WORKER_REPEAT_INTERVAL = 4L
+    const val UNIQUE_WORK_NAME = "fetch_remote_data_worker"
 }
