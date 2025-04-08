@@ -1,11 +1,16 @@
 package com.bor3y.dictations_list.data.local
 
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import androidx.paging.testing.asSnapshot
 import com.bor3y.core.data.local.DictationsListDao
 import com.bor3y.core.data.local.entity.DictationEntity
 import com.bor3y.dictations_list.data.local.model.DictationLocal
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -19,10 +24,9 @@ class RoomLocalDataSourceTest {
 
     @Before
     fun setUp() {
-        // Initialize the mocked DAO and data source before each test
-        dao = mockk(relaxed = true) // relaxed mocks to avoid setting up every return manually
+        dao = mockk(relaxed = true)
         dataSource =
-            RoomLocalDataSource(dao) // Instantiate the RoomLocalDataSource with the mock DAO
+            RoomLocalDataSource(dao)
     }
 
     @Test
@@ -38,23 +42,48 @@ class RoomLocalDataSourceTest {
     }
 
     @Test
-    fun `getDictations should return flow of dictations`() = runTest {
-        // Arrange: Create a mock instance of DictationItemEntity
-        val entity = mockk<DictationEntity>(relaxed = true)
+    fun `test getDictations returns correct data`() = runTest {
+        // Arrange: Prepare a sample DictationEntity and mock DAO's getDictations method
+        val dictationEntity = DictationEntity(
+            id = "64220988-c192-45f5-88a3-f5054b166445",
+            title = "New Ways to See",
+            text = "text",
+            audioFileDictation = "audioFileDictation",
+            audioFileNormal = "audioFileNormal",
+            createdAt = "2025-03-24 14:30:58",
+            englishLevel = "A1"
+        )
 
-        // Mock dao.getDictations() to return a flow containing a list with the mocked entity
-        every { dao.getDictations() } returns flowOf(listOf(entity))
+        val pagingSource = object : PagingSource<Int, DictationEntity>() {
+            override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DictationEntity> {
+                return LoadResult.Page(
+                    data = listOf(dictationEntity),
+                    prevKey = null,
+                    nextKey = null
+                )
+            }
 
-        // Act: Call the getDictations method of the data source
-        val result = dataSource.getDictations()
-
-        // Assert: Collect the flow and verify that it returns the expected list size
-        result.collect { list ->
-            assertEquals(1, list.size)
+            override fun getRefreshKey(state: PagingState<Int, DictationEntity>): Int? = null
         }
 
-        // Verify: Ensure that the DAO's getDictations method was called
-        verify { dao.getDictations() }
+        every { dao.getDictations() } returns pagingSource
+
+        // Act: Fetch dictations from the data source
+        val result = dataSource.getDictations().asSnapshot()
+
+        // Assert: Verify that the returned data matches the expected list
+        val expected = listOf(
+            DictationLocal(
+                id = "64220988-c192-45f5-88a3-f5054b166445",
+                title = "New Ways to See",
+                text = "text",
+                audioFileDictation = "audioFileDictation",
+                audioFileNormal = "audioFileNormal",
+                createdAt = "2025-03-24 14:30:58",
+                englishLevel = "A1"
+            )
+        )
+        assertEquals(expected, result)
     }
 
     @Test
@@ -112,5 +141,4 @@ class RoomLocalDataSourceTest {
         // Verify: Ensure that the DAO's getOldestDictations method was called with the correct argument
         coVerify { dao.getOldestDictations(2) }
     }
-
 }

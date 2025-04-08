@@ -56,6 +56,9 @@ dependencies {
     // Coroutines testing
     testImplementation(libs.turbine)
     testImplementation(libs.kotlinx.coroutines.test)
+    // Paging testing
+    testImplementation(libs.androidx.paging.common.ktx)
+    testImplementation(libs.androidx.paging.testing)
 
     // Hilt
     implementation(libs.hilt.android)

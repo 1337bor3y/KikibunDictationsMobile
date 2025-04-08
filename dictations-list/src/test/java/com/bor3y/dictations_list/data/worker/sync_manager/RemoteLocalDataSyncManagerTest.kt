@@ -1,4 +1,4 @@
-package com.bor3y.dictations_list.data.worker
+package com.bor3y.dictations_list.data.worker.sync_manager
 
 import android.content.Context
 import com.bor3y.core.file_manager.AudioFileManager
@@ -9,7 +9,6 @@ import com.bor3y.dictations_list.data.mapper.toLocal
 import com.bor3y.dictations_list.data.remote.RemoteDataSource
 import com.bor3y.dictations_list.data.remote.model.DictationDetailRemote
 import com.bor3y.dictations_list.data.remote.model.DictationItemRemote
-import com.bor3y.dictations_list.data.worker.sync_manager.RemoteLocalDataSyncManager
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify

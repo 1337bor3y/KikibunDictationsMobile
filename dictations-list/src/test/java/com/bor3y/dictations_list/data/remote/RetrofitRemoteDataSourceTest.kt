@@ -20,9 +20,7 @@ class RetrofitRemoteDataSourceTest {
 
     @Before
     fun setUp() {
-        // Create a mock of the DictationApi
         api = mockk(relaxed = true)
-        // Initialize RetrofitRemoteDataSource with the mocked API
         dataSource = RetrofitRemoteDataSource(api)
     }
 
