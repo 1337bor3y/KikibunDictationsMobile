@@ -1,6 +1,11 @@
 package com.bor3y.dictations_list.data.local
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.bor3y.core.data.local.DictationsListDao
+import com.bor3y.core.until.Constants
 import com.bor3y.dictations_list.data.local.model.DictationLocal
 import com.bor3y.dictations_list.data.mapper.toEntity
 import com.bor3y.dictations_list.data.mapper.toLocal
@@ -16,8 +21,20 @@ class RoomLocalDataSource @Inject constructor(
         dao.upsertDictations(dictations.map { it.toEntity() })
     }
 
-    override fun getDictations(): Flow<List<DictationLocal>> {
-        return dao.getDictations().map { list -> list.map { it.toLocal() } }
+    override fun getDictations(): Flow<PagingData<DictationLocal>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = Constants.DICTATIONS_LIST_PAGE_SIZE,
+                enablePlaceholders = false,
+                initialLoadSize = Constants.DICTATIONS_LIST_INITIAL_LOAD_SIZE
+            ),
+            pagingSourceFactory = { dao.getDictations() }
+        ).flow
+            .map { pagingData ->
+                pagingData.map { dictationEntity ->
+                    dictationEntity.toLocal()
+                }
+            }
     }
 
     override suspend fun getDictationsCount(): Int {

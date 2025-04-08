@@ -1,10 +1,10 @@
 package com.bor3y.core.data.local
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.bor3y.core.data.local.entity.DictationEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DictationsListDao {
@@ -13,7 +13,7 @@ interface DictationsListDao {
     suspend fun upsertDictations(dictations: List<DictationEntity>)
 
     @Query("SELECT * FROM dictations")
-    fun getDictations(): Flow<List<DictationEntity>>
+    fun getDictations(): PagingSource<Int, DictationEntity>
 
     @Query("SELECT COUNT(*) FROM dictations")
     suspend fun getDictationsCount(): Int
