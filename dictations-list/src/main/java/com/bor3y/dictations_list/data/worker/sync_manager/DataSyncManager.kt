@@ -1,4 +1,4 @@
-package com.bor3y.dictations_list.data.worker
+package com.bor3y.dictations_list.data.worker.sync_manager
 
 import android.content.Context
 

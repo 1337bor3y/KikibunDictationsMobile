@@ -4,8 +4,8 @@ import com.bor3y.dictations_list.data.local.LocalDataSource
 import com.bor3y.dictations_list.data.local.RoomLocalDataSource
 import com.bor3y.dictations_list.data.remote.RemoteDataSource
 import com.bor3y.dictations_list.data.remote.RetrofitRemoteDataSource
-import com.bor3y.dictations_list.data.worker.DataSyncManager
-import com.bor3y.dictations_list.data.worker.RemoteLocalDataSyncManager
+import com.bor3y.dictations_list.data.worker.sync_manager.DataSyncManager
+import com.bor3y.dictations_list.data.worker.sync_manager.RemoteLocalDataSyncManager
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

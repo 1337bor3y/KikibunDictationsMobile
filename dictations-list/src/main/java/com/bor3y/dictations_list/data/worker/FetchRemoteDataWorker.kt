@@ -3,6 +3,7 @@ package com.bor3y.dictations_list.data.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.bor3y.dictations_list.data.worker.sync_manager.DataSyncManager
 import javax.inject.Inject
 
 class FetchRemoteDataWorker @Inject constructor(
