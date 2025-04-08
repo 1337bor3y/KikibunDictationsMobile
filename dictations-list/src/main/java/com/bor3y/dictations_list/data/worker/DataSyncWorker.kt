@@ -6,7 +6,7 @@ import androidx.work.WorkerParameters
 import com.bor3y.dictations_list.data.worker.sync_manager.DataSyncManager
 import javax.inject.Inject
 
-class FetchRemoteDataWorker @Inject constructor(
+class DataSyncWorker @Inject constructor(
     private val appContext: Context,
     params: WorkerParameters,
     private val dataSyncManager: DataSyncManager

@@ -7,6 +7,4 @@ import kotlinx.coroutines.flow.Flow
 interface DictationsListRepository {
 
     fun getDictations(): Flow<PagingData<Dictation>>
-
-    fun enqueueFetchRemoteDataWorker()
 }

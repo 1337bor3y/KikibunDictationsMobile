@@ -72,6 +72,11 @@ dependencies {
     // Worker
     implementation(libs.androidx.work.runtime.ktx)
 
+    // Startup
+    implementation(libs.androidx.startup.runtime)
+    implementation(libs.auto.service)
+    ksp(libs.auto.service)
+
     // Include core module
     implementation(project(":core"))
 }

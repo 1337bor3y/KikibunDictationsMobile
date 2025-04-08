@@ -2,16 +2,11 @@ package com.bor3y.dictations_list.data.repository
 
 import androidx.paging.PagingData
 import androidx.paging.testing.asSnapshot
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.WorkManager
-import com.bor3y.core.until.Constants
 import com.bor3y.dictations_list.data.local.LocalDataSource
 import com.bor3y.dictations_list.data.local.model.DictationLocal
 import com.bor3y.dictations_list.domain.model.Dictation
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -25,11 +20,10 @@ class DictationsListRepositoryTest {
     private lateinit var repository: DictationsListRepositoryImpl
 
     private val localDataSource: LocalDataSource = mockk()
-    private val workManager: WorkManager = mockk()
 
     @Before
     fun setUp() {
-        repository = DictationsListRepositoryImpl(localDataSource, workManager)
+        repository = DictationsListRepositoryImpl(localDataSource)
     }
 
     @Test
@@ -53,29 +47,5 @@ class DictationsListRepositoryTest {
             Dictation("2", "Title 2", "Text 2", "file2", "file2_normal", "2022-04-02", "C1")
         )
         assertEquals(expected, result)
-    }
-
-    @Test
-    fun `enqueueFetchRemoteDataWorker() should enqueue periodic work`() {
-        // Arrange: Mock workManager.enqueueUniquePeriodicWork
-        every {
-            workManager.enqueueUniquePeriodicWork(
-                any(),
-                any(),
-                any()
-            )
-        } returns mockk()
-
-        // Act: Call repository.enqueueFetchRemoteDataWorker
-        repository.enqueueFetchRemoteDataWorker()
-
-        // Assert: Verify that workManager.enqueueUniquePeriodicWork was called with correct parameters
-        verify {
-            workManager.enqueueUniquePeriodicWork(
-                Constants.UNIQUE_WORK_NAME,
-                ExistingPeriodicWorkPolicy.KEEP,
-                any()
-            )
-        }
     }
 }
