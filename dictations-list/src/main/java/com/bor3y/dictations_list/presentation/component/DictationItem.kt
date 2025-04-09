@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bor3y.dictations_list.R
@@ -20,12 +19,11 @@ import com.bor3y.dictations_list.R
 @Composable
 fun DictationItem(
     modifier: Modifier = Modifier,
-    title: String = "New Ways to See",
-    isNew: Boolean = true
+    title: String,
+    isNew: Boolean
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
