@@ -7,6 +7,7 @@ import com.bor3y.dictations_list.data.local.model.DictationLocal
 import com.bor3y.dictations_list.data.remote.model.DictationDetailRemote
 import com.bor3y.dictations_list.data.remote.model.DictationItemRemote
 import com.bor3y.dictations_list.domain.model.Dictation
+import com.bor3y.dictations_list.domain.model.EnglishLevel
 
 fun DictationLocal.toEntity() = DictationEntity(
     id = id,
@@ -62,5 +63,5 @@ fun DictationLocal.toDomain() = Dictation(
     audioFileDictation = audioFileDictation,
     audioFileNormal = audioFileNormal,
     createdAt = createdAt,
-    englishLevel = englishLevel,
+    englishLevel = EnglishLevel.valueOf(englishLevel),
 )
