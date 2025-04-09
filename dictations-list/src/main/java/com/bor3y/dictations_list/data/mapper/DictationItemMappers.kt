@@ -32,18 +32,18 @@ fun DictationEntity.toLocal() = DictationLocal(
 fun DictationItemDto.toRemote() = DictationItemRemote(
     id = id,
     title = title,
-    createdAt = createdAt,
-    englishLevel = englishLevel,
+    createdAt = created_at,
+    englishLevel = english_level,
 )
 
 fun DictationDetailDto.toRemote() = DictationDetailRemote(
     id = id,
     title = title,
     text = text,
-    audioFileDictation = audioFileDictation,
-    audioFileNormal = audioFileNormal,
-    createdAt = createdAt,
-    englishLevel = englishLevel,
+    audioFileDictation = audio_file_dictation,
+    audioFileNormal = audio_file_normal,
+    createdAt = created_at,
+    englishLevel = english_level,
 )
 
 fun DictationDetailRemote.toLocal() = DictationLocal(

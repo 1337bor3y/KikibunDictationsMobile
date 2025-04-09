@@ -78,6 +78,15 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
-    // Include text-recognition module
+    // Worker
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+
+    // Startup
+    implementation(libs.androidx.startup.runtime)
+
+    // Modules
     implementation(project(":text-recognition"))
+    implementation(project(":dictations-list"))
 }

@@ -4,8 +4,8 @@ data class DictationDetailDto(
     val id: String,
     val title: String,
     val text: String,
-    val audioFileDictation: String,
-    val audioFileNormal: String,
-    val createdAt: String,
-    val englishLevel: String
+    val audio_file_dictation: String,
+    val audio_file_normal: String,
+    val created_at: String,
+    val english_level: String
 )
