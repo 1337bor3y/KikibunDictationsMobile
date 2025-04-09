@@ -21,14 +21,14 @@ class RoomLocalDataSource @Inject constructor(
         dao.upsertDictations(dictations.map { it.toEntity() })
     }
 
-    override fun getDictations(): Flow<PagingData<DictationLocal>> {
+    override fun getDictationsByEnglishLevel(englishLevel: String): Flow<PagingData<DictationLocal>> {
         return Pager(
             config = PagingConfig(
                 pageSize = Constants.DICTATIONS_LIST_PAGE_SIZE,
                 enablePlaceholders = false,
                 initialLoadSize = Constants.DICTATIONS_LIST_INITIAL_LOAD_SIZE
             ),
-            pagingSourceFactory = { dao.getDictations() }
+            pagingSourceFactory = { dao.getDictationsByEnglishLevel(englishLevel) }
         ).flow
             .map { pagingData ->
                 pagingData.map { dictationEntity ->

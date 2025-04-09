@@ -12,8 +12,8 @@ interface DictationsListDao {
     @Upsert
     suspend fun upsertDictations(dictations: List<DictationEntity>)
 
-    @Query("SELECT * FROM dictations")
-    fun getDictations(): PagingSource<Int, DictationEntity>
+    @Query("SELECT * FROM dictations WHERE english_level = :englishLevel")
+    fun getDictationsByEnglishLevel(englishLevel: String): PagingSource<Int, DictationEntity>
 
     @Query("SELECT COUNT(*) FROM dictations")
     suspend fun getDictationsCount(): Int

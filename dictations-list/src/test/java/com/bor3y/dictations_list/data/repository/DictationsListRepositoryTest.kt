@@ -5,6 +5,7 @@ import androidx.paging.testing.asSnapshot
 import com.bor3y.dictations_list.data.local.LocalDataSource
 import com.bor3y.dictations_list.data.local.model.DictationLocal
 import com.bor3y.dictations_list.domain.model.Dictation
+import com.bor3y.dictations_list.domain.model.EnglishLevel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,6 +14,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @ExperimentalCoroutinesApi
 class DictationsListRepositoryTest {
@@ -27,25 +31,54 @@ class DictationsListRepositoryTest {
     }
 
     @Test
-    fun `getDictations() should map DictationLocal to Dictation`() = runTest {
-        // Arrange: Prepare a list of DictationLocal and mock the localDataSource
+    fun `getDictations() should map DictationLocal to Dictation with correct isNew`() = runTest {
+        // Arrange
+        // Prepare today's and yesterday's dates formatted as "yyyy-MM-dd HH:mm:ss"
+        val today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        val yesterday = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+
+        // Create a list of DictationLocal objects with different createdAt dates
         val dictationLocalList = listOf(
-            DictationLocal("1", "Title 1", "Text 1", "file1", "file1_normal", "2022-04-01", "B2"),
-            DictationLocal("2", "Title 2", "Text 2", "file2", "file2_normal", "2022-04-02", "C1")
+            DictationLocal("1", "Title 1", "Text 1", "file1", "file1_normal", today, "A1"),      // created today
+            DictationLocal("2", "Title 2", "Text 2", "file2", "file2_normal", yesterday, "A1")   // created yesterday
         )
 
+        // Mock localDataSource to return a flow of PagingData from the list above
         val dictationFlow = flowOf(PagingData.from(dictationLocalList))
+        coEvery { localDataSource.getDictationsByEnglishLevel("A1") } returns dictationFlow
 
-        coEvery { localDataSource.getDictations() } returns dictationFlow
+        // Act
 
-        // Act: Fetch dictations from the repository
-        val result = repository.getDictations().asSnapshot()
+        // Fetch dictations from repository
+        val result = repository.getDictationsByEnglishLevel("A1").asSnapshot()
 
-        // Assert: Verify that DictationLocal items are correctly mapped to Dictation
+        // Assert
+
+        // Expected list after mapping
         val expected = listOf(
-            Dictation("1", "Title 1", "Text 1", "file1", "file1_normal", "2022-04-01", "B2"),
-            Dictation("2", "Title 2", "Text 2", "file2", "file2_normal", "2022-04-02", "C1")
+            Dictation(
+                id = "1",
+                title = "Title 1",
+                text = "Text 1",
+                audioFileDictation = "file1",
+                audioFileNormal = "file1_normal",
+                createdAt = today,
+                englishLevel = EnglishLevel.A1,   // Mapping String "A1" to enum EnglishLevel.A1
+                isNew = true                      // isNew = true because created today
+            ),
+            Dictation(
+                id = "2",
+                title = "Title 2",
+                text = "Text 2",
+                audioFileDictation = "file2",
+                audioFileNormal = "file2_normal",
+                createdAt = yesterday,
+                englishLevel = EnglishLevel.A1,   // Mapping String "A1" to enum EnglishLevel.A1
+                isNew = false                     // isNew = false because created yesterday
+            )
         )
+
+        // Verify that the mapped result matches the expected list
         assertEquals(expected, result)
     }
 }

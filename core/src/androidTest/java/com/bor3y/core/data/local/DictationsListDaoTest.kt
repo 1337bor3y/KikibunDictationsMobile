@@ -53,7 +53,7 @@ class DictationsListDaoTest {
         dao.upsertDictations(dictations)
 
         // Load data manually from PagingSource
-        val pagingSource = dao.getDictations()
+        val pagingSource = dao.getDictationsByEnglishLevel("A1")
         val loadResult = pagingSource.load(
             PagingSource.LoadParams.Refresh(
                 key = null,

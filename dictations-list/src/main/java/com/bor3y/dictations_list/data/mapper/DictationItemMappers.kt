@@ -56,7 +56,7 @@ fun DictationDetailRemote.toLocal() = DictationLocal(
     englishLevel = englishLevel,
 )
 
-fun DictationLocal.toDomain() = Dictation(
+fun DictationLocal.toDomain(isNew: Boolean) = Dictation(
     id = id,
     title = title,
     text = text,
@@ -64,4 +64,5 @@ fun DictationLocal.toDomain() = Dictation(
     audioFileNormal = audioFileNormal,
     createdAt = createdAt,
     englishLevel = EnglishLevel.valueOf(englishLevel),
+    isNew = isNew
 )

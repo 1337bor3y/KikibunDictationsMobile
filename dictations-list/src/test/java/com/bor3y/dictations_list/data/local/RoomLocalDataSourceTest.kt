@@ -66,10 +66,10 @@ class RoomLocalDataSourceTest {
             override fun getRefreshKey(state: PagingState<Int, DictationEntity>): Int? = null
         }
 
-        every { dao.getDictations() } returns pagingSource
+        every { dao.getDictationsByEnglishLevel("A1") } returns pagingSource
 
         // Act: Fetch dictations from the data source
-        val result = dataSource.getDictations().asSnapshot()
+        val result = dataSource.getDictationsByEnglishLevel("A1").asSnapshot()
 
         // Assert: Verify that the returned data matches the expected list
         val expected = listOf(
