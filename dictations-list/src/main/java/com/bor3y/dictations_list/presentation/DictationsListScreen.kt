@@ -120,19 +120,13 @@ fun EnglishLevelDropdown(
                 .padding(12.dp)
                 .fillMaxWidth()
         ) {
-            Box(
+            EnglishLevelIcon(
                 modifier = Modifier
-                    .size(40.dp)
-                    .background(Color.Black, shape = CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = selectedEnglishLevel.name,
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                    .size(40.dp),
+                levelName = selectedEnglishLevel.name,
+                boxColor = Color.Black,
+                textColor = Color.White
+            )
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -165,19 +159,13 @@ fun EnglishLevelDropdown(
             EnglishLevel.entries.forEach { level ->
                 DropdownMenuItem(
                     trailingIcon = {
-                        Box(
+                        EnglishLevelIcon(
                             modifier = Modifier
-                                .size(40.dp)
-                                .background(Color.White, shape = CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = level.name,
-                                color = Color.Black,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                                .size(40.dp),
+                            levelName = level.name,
+                            boxColor = Color.White,
+                            textColor = Color.Black
+                        )
                     },
                     text = {
                         Text(level.description)
@@ -189,5 +177,25 @@ fun EnglishLevelDropdown(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun EnglishLevelIcon(
+    modifier: Modifier = Modifier,
+    levelName: String,
+    boxColor: Color,
+    textColor: Color
+) {
+    Box(
+        modifier = modifier.background(boxColor, shape = CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = levelName,
+            color = textColor,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
