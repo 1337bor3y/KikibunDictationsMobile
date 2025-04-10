@@ -41,7 +41,7 @@ fun DictationItem(
                         color = colorResource(R.color.new_dictation),
                         shape = RoundedCornerShape(50)
                     )
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
                 fontSize = 14.sp
             )
         }

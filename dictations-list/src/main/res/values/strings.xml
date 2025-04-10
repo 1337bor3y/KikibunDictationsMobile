@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="english_level_dropdown_text">English Level</string>
+    <string name="dropdown_arrow_icon_content_description">Dropdown arrow</string>
+    <string name="daily_dictations_text">Daily Dictations</string>
+    <string name="all_dictations_text">All Dictations</string>
+</resources>
