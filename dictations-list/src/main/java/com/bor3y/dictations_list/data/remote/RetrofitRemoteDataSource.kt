@@ -11,10 +11,14 @@ class RetrofitRemoteDataSource @Inject constructor(
 ) : RemoteDataSource {
 
     override suspend fun getDictations(): Result<List<DictationItemRemote>> {
-        return api.getDictations().map { list -> list.map { it.toRemote() } }
+        return runCatching {
+            api.getDictations().map { it.toRemote() }
+        }
     }
 
     override suspend fun getDictationDetail(id: String): Result<DictationDetailRemote> {
-        return api.getDictationDetail(id).map { it.toRemote() }
+        return runCatching {
+            api.getDictationDetail(id).toRemote()
+        }
     }
 }
