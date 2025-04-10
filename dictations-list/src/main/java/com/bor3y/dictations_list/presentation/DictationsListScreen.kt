@@ -1,6 +1,5 @@
 package com.bor3y.dictations_list.presentation
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +22,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,58 +44,55 @@ import com.bor3y.dictations_list.presentation.component.DictationItem
 @Composable
 fun DictationsListScreen(
     modifier: Modifier = Modifier,
-    viewModel: DictationsListViewModel = hiltViewModel()
+    viewModel: DictationsListViewModel = hiltViewModel(),
+    showError: (String) -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
     val dictations = state.value.dictationPagingData.collectAsLazyPagingItems()
-    val context = LocalContext.current
 
     LaunchedEffect(key1 = dictations.loadState) {
         if (dictations.loadState.refresh is LoadState.Error) {
-            Toast.makeText(
-                context,
-                "Error: ${(dictations.loadState.refresh as LoadState.Error).error.message}",
-                Toast.LENGTH_LONG
-            ).show()
+            showError("Error: ${(dictations.loadState.refresh as LoadState.Error).error.message}")
         }
     }
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            if (dictations.loadState.refresh is LoadState.Loading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            } else {
-                LazyColumn(
-                    modifier = modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    item {
-                        EnglishLevelDropdown(
-                            selectedEnglishLevel = state.value.englishLevel,
-                            onEnglishLevelSelected = { englishLevel ->
-                                onEvent(DictationsListEvent.SelectEnglishLevel(englishLevel))
-                            }
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        if (dictations.loadState.refresh is LoadState.Loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    EnglishLevelDropdown(
+                        selectedEnglishLevel = state.value.englishLevel,
+                        onEnglishLevelSelected = { englishLevel ->
+                            onEvent(DictationsListEvent.SelectEnglishLevel(englishLevel))
+                        }
+                    )
+                }
+                items(dictations.itemCount) { dictationIndex ->
+                    dictations[dictationIndex]?.let {
+                        DictationItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = it.title,
+                            isNew = it.isNew
                         )
                     }
-                    items(dictations.itemCount) { dictationIndex ->
-                        dictations[dictationIndex]?.let {
-                            DictationItem(
-                                modifier = Modifier.fillMaxWidth(),
-                                title = it.title,
-                                isNew = it.isNew
-                            )
-                        }
-                    }
-                    item {
-                        if (dictations.loadState.append is LoadState.Loading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
+                }
+                item {
+                    if (dictations.loadState.append is LoadState.Loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     }
                 }
             }
@@ -178,7 +172,7 @@ fun EnglishLevelDropdown(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = selectedEnglishLevel.name,
+                                text = level.name,
                                 color = Color.Black,
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold

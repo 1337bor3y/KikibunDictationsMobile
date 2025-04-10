@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">KikibunDictations</string>
+    <string name="snackbar_close_content_description">Close snackbar</string>
 </resources>

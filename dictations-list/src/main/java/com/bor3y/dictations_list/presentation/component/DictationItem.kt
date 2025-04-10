@@ -2,7 +2,6 @@ package com.bor3y.dictations_list.presentation.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -24,7 +23,7 @@ fun DictationItem(
 ) {
     Row(
         modifier = modifier
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -43,7 +42,7 @@ fun DictationItem(
                         shape = RoundedCornerShape(50)
                     )
                     .padding(horizontal = 8.dp, vertical = 4.dp),
-                fontSize = 12.sp
+                fontSize = 14.sp
             )
         }
     }
