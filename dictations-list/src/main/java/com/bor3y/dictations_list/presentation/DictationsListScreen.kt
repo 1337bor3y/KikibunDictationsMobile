@@ -2,7 +2,6 @@ package com.bor3y.dictations_list.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,11 +50,20 @@ fun DictationsListScreen(
     viewModel: DictationsListViewModel = hiltViewModel(),
     showError: (String) -> Unit
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
-    val dictations = state.value.dictationPagingData.collectAsLazyPagingItems()
-    val dailyDictations = dictations.itemSnapshotList.items.filter { it.isNew }
-    val allDictations = dictations.itemSnapshotList.items.filter { !it.isNew }
+    val dictations = state.dictationPagingData.collectAsLazyPagingItems()
+    val hideCompletedText = if (state.hideCompleted) {
+        stringResource(R.string.show_completed_text)
+    } else {
+        stringResource(R.string.hide_completed_text)
+    }
+    val dailyDictations = dictations.itemSnapshotList.items.filter {
+        it.isNew && (!state.hideCompleted || !it.isCompleted)
+    }
+    val allDictations = dictations.itemSnapshotList.items.filter {
+        !it.isNew && (!state.hideCompleted || !it.isCompleted)
+    }
 
     LaunchedEffect(key1 = dictations.loadState) {
         if (dictations.loadState.refresh is LoadState.Error) {
@@ -73,7 +81,7 @@ fun DictationsListScreen(
             )
         } else {
             EnglishLevelDropdown(
-                selectedEnglishLevel = state.value.englishLevel,
+                selectedEnglishLevel = state.englishLevel,
                 onEnglishLevelSelected = { englishLevel ->
                     onEvent(DictationsListEvent.SelectEnglishLevel(englishLevel))
                 }
@@ -82,15 +90,15 @@ fun DictationsListScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 60.dp, start = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(top = 60.dp, start = 12.dp, end = 12.dp)
             ) {
-                item{
+                item {
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 if (dailyDictations.isNotEmpty()) {
                     item {
                         Text(
+                            modifier = Modifier.padding(vertical = 8.dp),
                             text = stringResource(R.string.daily_dictations_text),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.SemiBold
@@ -100,26 +108,44 @@ fun DictationsListScreen(
                         DictationItem(
                             modifier = Modifier.fillMaxWidth(),
                             title = it.title,
-                            isNew = it.isNew
+                            isNew = it.isNew,
+                            onItemClick = {
+                                // TODO: Navigate to detail screen
+                            }
                         )
                     }
                 }
 
-                if (allDictations.isNotEmpty()) {
-                    item {
+                item {
+                    Row(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
+                            modifier = Modifier.weight(1f),
                             text = stringResource(R.string.all_dictations_text),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.SemiBold
                         )
-                    }
-                    items(allDictations) {
-                        DictationItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = it.title,
-                            isNew = it.isNew
+                        Text(
+                            modifier = Modifier.clickable {
+                                onEvent(DictationsListEvent.ToggleHideCompleted)
+                            },
+                            text = hideCompletedText,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Color.Gray,
                         )
                     }
+                }
+                items(allDictations) {
+                    DictationItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = it.title,
+                        isNew = it.isNew,
+                        onItemClick = {
+                            // TODO: Navigate to detail screen
+                        }
+                    )
                 }
 
                 item {
@@ -148,11 +174,11 @@ fun EnglishLevelDropdown(
             .wrapContentSize(Alignment.TopStart)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .clickable { expanded = true }
                 .padding(12.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             EnglishLevelIcon(
                 modifier = Modifier

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,6 +38,11 @@ class DictationsListViewModel @Inject constructor(
         when (event) {
             is DictationsListEvent.SelectDictation -> TODO()
             is DictationsListEvent.SelectEnglishLevel -> _englishLevel.value = event.englishLevel
+            is DictationsListEvent.ToggleHideCompleted -> _state.update {
+                it.copy(
+                    hideCompleted = !it.hideCompleted
+                )
+            }
         }
     }
 }

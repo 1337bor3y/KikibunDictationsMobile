@@ -8,4 +8,6 @@ sealed interface DictationsListEvent {
     data class SelectDictation(val dictation: Dictation): DictationsListEvent
 
     data class SelectEnglishLevel(val englishLevel: EnglishLevel): DictationsListEvent
+
+    data object ToggleHideCompleted: DictationsListEvent
 }

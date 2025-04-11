@@ -8,5 +8,6 @@ import kotlinx.coroutines.flow.emptyFlow
 
 data class DictationsListState(
     val dictationPagingData: Flow<PagingData<Dictation>> = emptyFlow(),
-    val englishLevel: EnglishLevel = EnglishLevel.A1
+    val englishLevel: EnglishLevel = EnglishLevel.A1,
+    val hideCompleted: Boolean = false
 )

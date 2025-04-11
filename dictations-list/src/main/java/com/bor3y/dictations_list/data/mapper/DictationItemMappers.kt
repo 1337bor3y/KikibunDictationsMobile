@@ -64,5 +64,6 @@ fun DictationLocal.toDomain(isNew: Boolean) = Dictation(
     audioFileNormal = audioFileNormal,
     createdAt = createdAt,
     englishLevel = EnglishLevel.valueOf(englishLevel),
-    isNew = isNew
+    isNew = isNew,
+    isCompleted = false
 )

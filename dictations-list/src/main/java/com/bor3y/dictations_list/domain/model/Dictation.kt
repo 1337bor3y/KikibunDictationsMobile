@@ -8,5 +8,6 @@ data class Dictation(
     val audioFileNormal: String,
     val createdAt: String,
     val englishLevel: EnglishLevel,
-    val isNew: Boolean
+    val isNew: Boolean,
+    val isCompleted: Boolean
 )

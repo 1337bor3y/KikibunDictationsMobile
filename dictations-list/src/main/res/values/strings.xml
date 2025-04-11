@@ -4,4 +4,6 @@
     <string name="dropdown_arrow_icon_content_description">Dropdown arrow</string>
     <string name="daily_dictations_text">Daily Dictations</string>
     <string name="all_dictations_text">All Dictations</string>
+    <string name="hide_completed_text">Hide Completed</string>
+    <string name="show_completed_text">Show Completed</string>
 </resources>
