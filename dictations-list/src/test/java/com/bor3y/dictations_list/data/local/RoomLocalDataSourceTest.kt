@@ -13,6 +13,8 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
@@ -25,8 +27,7 @@ class RoomLocalDataSourceTest {
     @Before
     fun setUp() {
         dao = mockk(relaxed = true)
-        dataSource =
-            RoomLocalDataSource(dao)
+        dataSource = RoomLocalDataSource(dao)
     }
 
     @Test
@@ -51,7 +52,8 @@ class RoomLocalDataSourceTest {
             audioFileDictation = "audioFileDictation",
             audioFileNormal = "audioFileNormal",
             createdAt = "2025-03-24 14:30:58",
-            englishLevel = "A1"
+            englishLevel = "A1",
+            isCompleted = false
         )
 
         val pagingSource = object : PagingSource<Int, DictationEntity>() {
@@ -80,7 +82,8 @@ class RoomLocalDataSourceTest {
                 audioFileDictation = "audioFileDictation",
                 audioFileNormal = "audioFileNormal",
                 createdAt = "2025-03-24 14:30:58",
-                englishLevel = "A1"
+                englishLevel = "A1",
+                isCompleted = false
             )
         )
         assertEquals(expected, result)
@@ -140,5 +143,34 @@ class RoomLocalDataSourceTest {
 
         // Verify: Ensure that the DAO's getOldestDictations method was called with the correct argument
         coVerify { dao.getOldestDictations(2) }
+    }
+
+    @Test
+    fun `getDictationById should return dictation when found`() = runTest {
+        // Arrange: Prepare a sample DictationEntity and mock DAO's getDictationById method
+        val id = "test-id"
+        val dictationEntity = mockk<DictationEntity>(relaxed = true)
+        coEvery { dao.getDictationById(id) } returns dictationEntity
+
+        // Act: Call the getDictationById method of the data source
+        val result = dataSource.getDictationById(id)
+
+        // Assert: Verify that the result is not null and is of type DictationLocal
+        assertNotNull(result)
+        coVerify { dao.getDictationById(id) }
+    }
+
+    @Test
+    fun `getDictationById should return null when not found`() = runTest {
+        // Arrange: Mock DAO's getDictationById method to return null
+        val id = "non-existing-id"
+        coEvery { dao.getDictationById(id) } returns null
+
+        // Act: Call the getDictationById method of the data source
+        val result = dataSource.getDictationById(id)
+
+        // Assert: Verify that the result is null
+        assertNull(result)
+        coVerify { dao.getDictationById(id) }
     }
 }

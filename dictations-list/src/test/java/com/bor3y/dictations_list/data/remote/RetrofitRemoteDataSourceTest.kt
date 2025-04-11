@@ -28,7 +28,7 @@ class RetrofitRemoteDataSourceTest {
     fun `getDictations should return a Result containing a list of dictations`() = runTest {
         // Arrange: Create mock dictation items that the API should return
         val mockRemoteDictation = mockk<DictationItemDto>(relaxed = true)
-        val mockApiResponse = Result.success(listOf(mockRemoteDictation))
+        val mockApiResponse = listOf(mockRemoteDictation)
 
         // Mock api.getDictations() to return a successful response with mock data
         coEvery { api.getDictations() } returns mockApiResponse
@@ -47,8 +47,8 @@ class RetrofitRemoteDataSourceTest {
     @Test
     fun `getDictations should return an error result if the API call fails`() = runTest {
         // Arrange: Simulate an API failure
-        val mockApiResponse = Result.failure<List<DictationItemDto>>(Exception("API failure"))
-        coEvery { api.getDictations() } returns mockApiResponse
+        val mockApiResponse = Exception("API failure")
+        coEvery { api.getDictations() } throws mockApiResponse
 
         // Act: Call the method under test
         val result = dataSource.getDictations()
@@ -65,10 +65,9 @@ class RetrofitRemoteDataSourceTest {
     fun `getDictationDetail should return a Result containing dictation detail`() = runTest {
         // Arrange: Create a mock dictation detail that the API should return
         val mockDictationDetail = mockk<DictationDetailDto>(relaxed = true)
-        val mockApiResponse = Result.success(mockDictationDetail)
 
         // Mock api.getDictationDetail() to return a successful response with mock data
-        coEvery { api.getDictationDetail(any()) } returns mockApiResponse
+        coEvery { api.getDictationDetail(any()) } returns mockDictationDetail
 
         // Act: Call the method under test
         val result = dataSource.getDictationDetail("123")
@@ -84,8 +83,8 @@ class RetrofitRemoteDataSourceTest {
     @Test
     fun `getDictationDetail should return an error result if the API call fails`() = runTest {
         // Arrange: Simulate an API failure
-        val mockApiResponse = Result.failure<DictationDetailDto>(Exception("API failure"))
-        coEvery { api.getDictationDetail(any()) } returns mockApiResponse
+        val mockApiResponse = Exception("API failure")
+        coEvery { api.getDictationDetail(any()) } throws mockApiResponse
 
         // Act: Call the method under test
         val result = dataSource.getDictationDetail("123")

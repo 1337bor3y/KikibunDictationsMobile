@@ -17,5 +17,7 @@ class DictationEntity(
     @ColumnInfo(name = "created_at")
     val createdAt: String,
     @ColumnInfo(name = "english_level")
-    val englishLevel: String
+    val englishLevel: String,
+    @ColumnInfo(name = "is_completed")
+    val isCompleted: Boolean
 )

@@ -17,6 +17,7 @@ fun DictationLocal.toEntity() = DictationEntity(
     audioFileNormal = audioFileNormal,
     createdAt = createdAt,
     englishLevel = englishLevel,
+    isCompleted = isCompleted
 )
 
 fun DictationEntity.toLocal() = DictationLocal(
@@ -27,6 +28,7 @@ fun DictationEntity.toLocal() = DictationLocal(
     audioFileNormal = audioFileNormal,
     createdAt = createdAt,
     englishLevel = englishLevel,
+    isCompleted = isCompleted
 )
 
 fun DictationItemDto.toRemote() = DictationItemRemote(
@@ -46,7 +48,7 @@ fun DictationDetailDto.toRemote() = DictationDetailRemote(
     englishLevel = english_level,
 )
 
-fun DictationDetailRemote.toLocal() = DictationLocal(
+fun DictationDetailRemote.toLocal(isCompleted: Boolean?) = DictationLocal(
     id = id,
     title = title,
     text = text,
@@ -54,6 +56,7 @@ fun DictationDetailRemote.toLocal() = DictationLocal(
     audioFileNormal = audioFileNormal,
     createdAt = createdAt,
     englishLevel = englishLevel,
+    isCompleted = isCompleted ?: false
 )
 
 fun DictationLocal.toDomain(isNew: Boolean) = Dictation(
@@ -65,5 +68,5 @@ fun DictationLocal.toDomain(isNew: Boolean) = Dictation(
     createdAt = createdAt,
     englishLevel = EnglishLevel.valueOf(englishLevel),
     isNew = isNew,
-    isCompleted = false
+    isCompleted = isCompleted
 )

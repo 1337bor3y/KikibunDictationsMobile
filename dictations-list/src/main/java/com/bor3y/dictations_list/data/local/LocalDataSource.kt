@@ -2,7 +2,6 @@ package com.bor3y.dictations_list.data.local
 
 import androidx.paging.PagingData
 import com.bor3y.dictations_list.data.local.model.DictationLocal
-import com.bor3y.dictations_list.domain.model.EnglishLevel
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {
@@ -18,4 +17,6 @@ interface LocalDataSource {
     suspend fun deleteOldestDictations(count: Int)
 
     suspend fun getOldestDictations(count: Int): List<DictationLocal>
+
+    suspend fun getDictationById(id: String): DictationLocal?
 }

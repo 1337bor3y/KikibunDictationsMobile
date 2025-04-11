@@ -26,4 +26,10 @@ interface DictationsListDao {
 
     @Query("SELECT * FROM dictations ORDER BY created_at ASC LIMIT :limit")
     suspend fun getOldestDictations(limit: Int): List<DictationEntity>
+
+    @Query("UPDATE dictations SET is_completed = :isCompleted WHERE id = :id")
+    suspend fun updateIsCompleted(id: String, isCompleted: Boolean)
+
+    @Query("SELECT * FROM dictations WHERE id = :id")
+    suspend fun getDictationById(id: String): DictationEntity?
 }

@@ -7,5 +7,6 @@ data class DictationLocal(
     val audioFileDictation: String,
     val audioFileNormal: String,
     val createdAt: String,
-    val englishLevel: String
+    val englishLevel: String,
+    val isCompleted: Boolean
 )

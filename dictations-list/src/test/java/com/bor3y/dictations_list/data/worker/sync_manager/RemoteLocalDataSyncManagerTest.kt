@@ -83,6 +83,7 @@ class RemoteLocalDataSyncManagerTest {
         // Mock local data source behavior
         coEvery { localDataSource.getDictationsCount() } returns 0
         coEvery { localDataSource.upsertDictations(any()) } just Runs
+        coEvery { localDataSource.getDictationById("1")?.isCompleted } returns false
 
         // Run the sync operation
         val result = syncManager.sync(context)
@@ -156,8 +157,9 @@ class RemoteLocalDataSyncManagerTest {
 
             // Mock local data source behavior
             coEvery { localDataSource.getDictationsCount() } returns Constants.MAX_DICTATIONS_IN_DB
+            coEvery { localDataSource.getDictationById("1")?.isCompleted } returns false
             coEvery { localDataSource.getOldestDictations(Constants.OLDEST_DICTATIONS_DELETE_COUNT) } returns
-                    listOf(dictationDetailRemote.toLocal())
+                    listOf(dictationDetailRemote.toLocal(false))
             coEvery { localDataSource.deleteOldestDictations(Constants.OLDEST_DICTATIONS_DELETE_COUNT) } just Runs
             coEvery { audioFileManager.deleteFile(any()) } returns true
             coEvery { localDataSource.upsertDictations(any()) } just Runs
@@ -195,6 +197,7 @@ class RemoteLocalDataSyncManagerTest {
 
         // Mock the remote data source to return successful data fetch
         coEvery { remoteDataSource.getDictations() } returns Result.success(dictationItemRemotes)
+        coEvery { localDataSource.getDictationById("1")?.isCompleted } returns false
         coEvery { remoteDataSource.getDictationDetail(dictationItemRemote.id) } returns
                 Result.success(dictationDetailRemote)
 

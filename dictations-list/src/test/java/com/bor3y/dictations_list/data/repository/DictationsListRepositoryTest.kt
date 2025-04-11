@@ -14,7 +14,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -31,16 +30,35 @@ class DictationsListRepositoryTest {
     }
 
     @Test
-    fun `getDictations() should map DictationLocal to Dictation with correct isNew`() = runTest {
+    fun `getDictations() should map DictationLocal to Dictation`() = runTest {
         // Arrange
         // Prepare today's and yesterday's dates formatted as "yyyy-MM-dd HH:mm:ss"
         val today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        val yesterday = LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        val yesterday = LocalDateTime.now().minusDays(1)
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
         // Create a list of DictationLocal objects with different createdAt dates
         val dictationLocalList = listOf(
-            DictationLocal("1", "Title 1", "Text 1", "file1", "file1_normal", today, "A1"),      // created today
-            DictationLocal("2", "Title 2", "Text 2", "file2", "file2_normal", yesterday, "A1")   // created yesterday
+            DictationLocal(
+                id = "1",
+                title = "Title 1",
+                text = "Text 1",
+                audioFileDictation = "file1",
+                audioFileNormal = "file1_normal",
+                createdAt = today,
+                englishLevel = "A1",
+                isCompleted = false
+            ), // created today
+            DictationLocal(
+                id = "2",
+                title = "Title 2",
+                text = "Text 2",
+                audioFileDictation = "file2",
+                audioFileNormal = "file2_normal",
+                createdAt = yesterday,
+                englishLevel = "A1",
+                isCompleted = false
+            ) // created yesterday
         )
 
         // Mock localDataSource to return a flow of PagingData from the list above
@@ -64,7 +82,8 @@ class DictationsListRepositoryTest {
                 audioFileNormal = "file1_normal",
                 createdAt = today,
                 englishLevel = EnglishLevel.A1,   // Mapping String "A1" to enum EnglishLevel.A1
-                isNew = true                      // isNew = true because created today
+                isNew = true,
+                isCompleted = false
             ),
             Dictation(
                 id = "2",
@@ -74,7 +93,8 @@ class DictationsListRepositoryTest {
                 audioFileNormal = "file2_normal",
                 createdAt = yesterday,
                 englishLevel = EnglishLevel.A1,   // Mapping String "A1" to enum EnglishLevel.A1
-                isNew = false                     // isNew = false because created yesterday
+                isNew = false,
+                isCompleted = false
             )
         )
 

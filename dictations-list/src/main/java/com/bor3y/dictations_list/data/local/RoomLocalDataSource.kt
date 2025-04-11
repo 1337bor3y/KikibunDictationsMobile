@@ -52,4 +52,8 @@ class RoomLocalDataSource @Inject constructor(
     override suspend fun getOldestDictations(count: Int): List<DictationLocal> {
         return dao.getOldestDictations(limit = count).map { it.toLocal() }
     }
+
+    override suspend fun getDictationById(id: String): DictationLocal? {
+        return dao.getDictationById(id)?.toLocal()
+    }
 }

@@ -8,6 +8,8 @@ import com.bor3y.core.data.local.entity.DictationEntity
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,7 +47,8 @@ class DictationsListDaoTest {
                 audioFileDictation = "audioFileDictation",
                 audioFileNormal = "audioFileNormal",
                 createdAt = "2025-03-24 14:30:58",
-                englishLevel = "A1"
+                englishLevel = "A1",
+                isCompleted = false
             )
         )
 
@@ -80,7 +83,8 @@ class DictationsListDaoTest {
                 audioFileDictation = "audioFileDictation",
                 audioFileNormal = "audioFileNormal",
                 createdAt = "2025-03-24 14:30:58",
-                englishLevel = "A1"
+                englishLevel = "A1",
+                isCompleted = false
             )
         )
         dao.upsertDictations(dictations)
@@ -103,7 +107,8 @@ class DictationsListDaoTest {
                 audioFileDictation = "audioFileDictation",
                 audioFileNormal = "audioFileNormal",
                 createdAt = "2025-03-24 14:30:58",
-                englishLevel = "A1"
+                englishLevel = "A1",
+                isCompleted = false
             )
         )
         dao.upsertDictations(dictations)
@@ -127,7 +132,8 @@ class DictationsListDaoTest {
                 audioFileDictation = "audioFileDictation",
                 audioFileNormal = "audioFileNormal",
                 createdAt = "2025-03-01 14:30:58",
-                englishLevel = "A1"
+                englishLevel = "A1",
+                isCompleted = false
             ),
             DictationEntity(
                 id = "2",
@@ -136,7 +142,8 @@ class DictationsListDaoTest {
                 audioFileDictation = "audioFileDictation",
                 audioFileNormal = "audioFileNormal",
                 createdAt = "2025-03-02 14:30:58",
-                englishLevel = "A2"
+                englishLevel = "A2",
+                isCompleted = false
             ),
             DictationEntity(
                 id = "3",
@@ -145,7 +152,8 @@ class DictationsListDaoTest {
                 audioFileDictation = "audioFileDictation",
                 audioFileNormal = "audioFileNormal",
                 createdAt = "2025-03-03 14:30:58",
-                englishLevel = "B1"
+                englishLevel = "B1",
+                isCompleted = false
             )
         )
         dao.upsertDictations(dictations)
@@ -157,5 +165,54 @@ class DictationsListDaoTest {
         assertEquals(2, result.size)
         assertEquals("Title 1", result[0].title)  // Oldest
         assertEquals("Title 2", result[1].title)  // Second oldest
+    }
+
+    @Test
+    fun testUpdateIsCompleted() = runTest {
+        // Given
+        val dictation = DictationEntity(
+            id = "1",
+            title = "Test Title",
+            text = "Test Text",
+            audioFileDictation = "dictation.mp3",
+            audioFileNormal = "normal.mp3",
+            createdAt = "2025-04-10T10:00:00Z",
+            englishLevel = "B1",
+            isCompleted = false
+        )
+        dao.upsertDictations(listOf(dictation))
+
+        // When
+        dao.updateIsCompleted(id = "1", isCompleted = true)
+        val updatedDictation = dao.getDictationById("1")
+
+        // Then
+        assertNotNull(updatedDictation)
+        assertTrue(updatedDictation!!.isCompleted)
+    }
+
+    @Test
+    fun testGetDictationById() = runTest {
+        // Given
+        val dictation = DictationEntity(
+            id = "2",
+            title = "Another Title",
+            text = "Another Text",
+            audioFileDictation = "another_dictation.mp3",
+            audioFileNormal = "another_normal.mp3",
+            createdAt = "2025-04-10T11:00:00Z",
+            englishLevel = "B2",
+            isCompleted = false
+        )
+        dao.upsertDictations(listOf(dictation))
+
+        // When
+        val fetchedDictation = dao.getDictationById("2")
+
+        // Then
+        assertNotNull(fetchedDictation)
+        assertEquals(dictation.id, fetchedDictation!!.id)
+        assertEquals(dictation.title, fetchedDictation.title)
+        assertEquals(dictation.isCompleted, fetchedDictation.isCompleted)
     }
 }

@@ -37,7 +37,7 @@ class RemoteLocalDataSyncManager @Inject constructor(
                             detailException.localizedMessage ?: "Unknown error"
                         )
                         return@withContext false
-                    }.toLocal()
+                    }.toLocal(localDataSource.getDictationById(item.id)?.isCompleted)
 
                 val localNormalPath = audioFileManager.saveFile(
                     context = context,
