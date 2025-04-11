@@ -4,6 +4,8 @@ import com.bor3y.core.file_manager.AudioFileManager
 import com.bor3y.core.file_manager.IternalStorageAudioFileManager
 import com.bor3y.core.logger.Logger
 import com.bor3y.core.logger.SimpleLogger
+import com.bor3y.core.network.NetworkMonitor
+import com.bor3y.core.network.NetworkMonitorImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -25,4 +27,10 @@ abstract class CoreModule {
     abstract fun provideAudioFileManager(
         iternalStorageAudioFileManager: IternalStorageAudioFileManager
     ): AudioFileManager
+
+    @Binds
+    @Singleton
+    abstract fun provideNetworkMonitor(
+        networkMonitorImpl: NetworkMonitorImpl
+    ): NetworkMonitor
 }
