@@ -34,6 +34,9 @@ class NetworkMonitorImpl @Inject constructor(
             }
         }
 
+        val isConnected = connectivityManager.activeNetwork != null
+        trySend(isConnected)
+
         val networkRequest = NetworkRequest.Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()

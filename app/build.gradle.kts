@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.androidx.startup.runtime)
 
     // Modules
+    implementation(project(":core"))
     implementation(project(":text-recognition"))
     implementation(project(":dictations-list"))
 }

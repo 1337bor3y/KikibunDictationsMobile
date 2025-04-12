@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,34 +19,46 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bor3y.core.network.NetworkMonitor
 import com.bor3y.dictations_list.presentation.DictationsListScreen
+import com.bor3y.kikibundictations.component.ConnectivityBanner
 import com.bor3y.kikibundictations.ui.theme.KikibunDictationsTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             KikibunDictationsTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
-                val errorMessage = remember { mutableStateOf<String?>(null) }
+                var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
+                val isOnline by networkMonitor.isOnline.collectAsStateWithLifecycle(true)
 
-                LaunchedEffect(errorMessage.value) {
-                    errorMessage.value?.let {
+                LaunchedEffect(errorMessage) {
+                    errorMessage?.let {
                         snackbarHostState.showSnackbar(
                             message = it,
                             duration = SnackbarDuration.Long
                         )
-                        errorMessage.value = null
+                        errorMessage = null
                     }
                 }
 
@@ -78,15 +91,14 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) { padding ->
-                    DictationsListScreen(
-                        modifier = Modifier.padding(padding),
-                        showError = { message ->
-                            errorMessage.value = message
-                        }
-                    )
-//                    CameraPreviewScreen(modifier = Modifier.padding(padding)) { recognizedText ->
-//                        Log.d("RecognizedText", recognizedText)
-//                    }
+                    Column(modifier = Modifier.padding(padding)) {
+                        ConnectivityBanner(isOnline = isOnline)
+                        DictationsListScreen(
+                            showError = { message ->
+                                errorMessage = message
+                            }
+                        )
+                    }
                 }
             }
         }
