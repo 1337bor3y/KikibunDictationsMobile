@@ -4,4 +4,7 @@
     <string name="offline_mode_icon_content_description">Offline Mode</string>
     <string name="offline_mode_text">Offline Mode</string>
     <string name="reconnected_text">Reconnected</string>
+    <string name="offline_mode_dialog_text">You are currently in Offline Mode. You can still use dictations that were previously downloaded, but new dictations are unavailable until you turn on the internet and reconnect.</string>
+    <string name="offline_mode_dialog_title">Offline Mode Restrictions</string>
+    <string name="offline_mode_dialog_button_text">Close and Hide Banner</string>
 </resources>

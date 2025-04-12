@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,14 +37,13 @@ fun ConnectivityBanner(
 ) {
     var hideBanner by rememberSaveable { mutableStateOf(false) }
     var wasOfflineDisplayed by rememberSaveable { mutableStateOf(false) }
+    var showDialog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(isOnline) {
-        if (isOnline && wasOfflineDisplayed && !hideBanner) {
+        hideBanner = false
+        if (isOnline && wasOfflineDisplayed) {
             kotlinx.coroutines.delay(3000)
             hideBanner = true
-        }
-        if (!isOnline && hideBanner) {
-            hideBanner = false
         }
     }
 
@@ -53,7 +54,7 @@ fun ConnectivityBanner(
                 .background(colorResource(R.color.offline_mode))
                 .height(46.dp)
                 .clickable {
-                    hideBanner = true
+                    showDialog = true
                 },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
@@ -88,5 +89,21 @@ fun ConnectivityBanner(
                 fontWeight = FontWeight.SemiBold
             )
         }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(stringResource(R.string.offline_mode_dialog_title)) },
+            text = { Text(stringResource(R.string.offline_mode_dialog_text)) },
+            confirmButton = {
+                Button(onClick = {
+                    showDialog = false
+                    hideBanner = true
+                }) {
+                    Text(stringResource(R.string.offline_mode_dialog_button_text))
+                }
+            }
+        )
     }
 }
