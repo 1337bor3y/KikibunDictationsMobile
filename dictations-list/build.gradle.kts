@@ -77,6 +77,9 @@ dependencies {
     // Startup
     implementation(libs.androidx.startup.runtime)
 
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
+
     // Include core module
     implementation(project(":core"))
 }
