@@ -39,9 +39,13 @@ fun ConnectivityBanner(
     var hideBanner by rememberSaveable { mutableStateOf(false) }
     var wasOfflineDisplayed by rememberSaveable { mutableStateOf(false) }
     var showDialog by rememberSaveable { mutableStateOf(false) }
+    var prevIsOnline by rememberSaveable { mutableStateOf(isOnline) }
 
     LaunchedEffect(isOnline) {
-        hideBanner = false
+        if (prevIsOnline != isOnline) {
+            hideBanner = false
+            prevIsOnline = isOnline
+        }
         if (isOnline && wasOfflineDisplayed) {
             kotlinx.coroutines.delay(3000)
             hideBanner = true
