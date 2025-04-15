@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -97,10 +98,14 @@ fun ConnectivityBanner(
             title = { Text(stringResource(R.string.offline_mode_dialog_title)) },
             text = { Text(stringResource(R.string.offline_mode_dialog_text)) },
             confirmButton = {
-                Button(onClick = {
-                    showDialog = false
-                    hideBanner = true
-                }) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    ),
+                    onClick = {
+                        showDialog = false
+                        hideBanner = true
+                    }) {
                     Text(stringResource(R.string.offline_mode_dialog_button_text))
                 }
             }
