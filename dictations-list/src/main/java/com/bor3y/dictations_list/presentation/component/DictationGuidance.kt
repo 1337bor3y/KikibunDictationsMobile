@@ -12,10 +12,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -70,7 +70,7 @@ fun DictationGuidance(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .verticalScroll(scrollState)
     ) {
         Text(
@@ -339,30 +339,28 @@ fun HighlightedErrorTipText() {
         )
 
         errorMessage?.let { message ->
-            Box(modifier = Modifier.offset {
-                IntOffset(
-                    popupPosition.x.roundToInt(),
-                    popupPosition.y.roundToInt()
-                )
-            }) {
-                Column(
-                    modifier = Modifier
-                        .onGloballyPositioned {
-                            popupWidth = it.size.width
-                            popupHeight = it.size.height
-                        }
-                        .widthIn(max = 300.dp)
-                        .background(Color.Black, RoundedCornerShape(8.dp))
-                        .shadow(4.dp, RoundedCornerShape(8.dp))
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = message,
-                        color = Color.White,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 16.sp
+            Box(modifier = Modifier
+                .absoluteOffset {
+                    IntOffset(
+                        popupPosition.x.roundToInt(),
+                        popupPosition.y.roundToInt()
                     )
                 }
+                .onGloballyPositioned {
+                    popupWidth = it.size.width
+                    popupHeight = it.size.height
+                }
+                .widthIn(max = 300.dp)
+                .background(Color.Black, RoundedCornerShape(8.dp))
+                .shadow(4.dp, RoundedCornerShape(8.dp))
+                .padding(16.dp)
+            ) {
+                Text(
+                    text = message,
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 16.sp
+                )
             }
         }
 

@@ -39,9 +39,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.bor3y.dictations_list.R
+import com.bor3y.dictations_list.domain.model.Dictation
 import com.bor3y.dictations_list.domain.model.EnglishLevel
 import com.bor3y.dictations_list.presentation.component.DictationGuidance
 import com.bor3y.dictations_list.presentation.component.DictationItem
@@ -58,13 +60,6 @@ fun DictationsListScreen(
     val dictations = dictationsPaging.itemSnapshotList.items.filter {
         !state.hideCompleted || !it.isCompleted
     }
-    val hideCompletedText = if (state.hideCompleted) {
-        stringResource(R.string.show_completed_text)
-    } else {
-        stringResource(R.string.hide_completed_text)
-    }
-    val dailyDictations = dictations.filter { it.isNew }
-    val allDictations = dictations.filter { !it.isNew }
 
     LaunchedEffect(key1 = dictationsPaging.loadState) {
         if (dictationsPaging.loadState.refresh is LoadState.Error) {
@@ -72,113 +67,66 @@ fun DictationsListScreen(
         }
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        when {
-            dictationsPaging.loadState.refresh is LoadState.Loading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
+    Box(modifier = modifier.fillMaxSize()) {
+        DictationsListContent(
+            state = state,
+            dictations = dictations,
+            pagingState = dictationsPaging.loadState,
+            onEvent = onEvent
+        )
+    }
+}
 
-            dictations.isEmpty() -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally),
-                        text = stringResource(R.string.dictations_empty_text),
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center
-                    )
-                    DictationGuidance()
-                }
-            }
+@Composable
+private fun DictationsListContent(
+    state: DictationsListState,
+    dictations: List<Dictation>,
+    pagingState: CombinedLoadStates,
+    onEvent: (DictationsListEvent) -> Unit
+) {
+    val dailyDictations = dictations.filter { it.isNew }
+    val allDictations = dictations.filter { !it.isNew }
 
-            else -> {
-                EnglishLevelDropdown(
-                    selectedEnglishLevel = state.englishLevel,
-                    onEnglishLevelSelected = { englishLevel ->
-                        onEvent(DictationsListEvent.SelectEnglishLevel(englishLevel))
-                    }
-                )
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 60.dp, start = 12.dp, end = 12.dp)
-                ) {
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                    if (dailyDictations.isNotEmpty()) {
-                        item {
-                            Text(
-                                modifier = Modifier.padding(vertical = 8.dp),
-                                text = stringResource(R.string.daily_dictations_text),
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                        items(dailyDictations) {
-                            DictationItem(
-                                modifier = Modifier.fillMaxWidth(),
-                                title = it.title,
-                                isNew = it.isNew,
-                                onItemClick = {
-                                    // TODO: Navigate to detail screen
-                                }
-                            )
-                        }
-                    }
-
-                    item {
-                        Row(
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier.weight(1f),
-                                text = stringResource(R.string.all_dictations_text),
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                modifier = Modifier.clickable {
-                                    onEvent(DictationsListEvent.ToggleHideCompleted)
-                                },
-                                text = hideCompletedText,
-                                style = MaterialTheme.typography.labelLarge,
-                                color = Color.Gray,
-                            )
-                        }
-                    }
-                    items(allDictations) {
-                        DictationItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = it.title,
-                            isNew = it.isNew,
-                            onItemClick = {
-                                // TODO: Navigate to detail screen
-                            }
-                        )
-                    }
-
-                    item {
-                        if (dictationsPaging.loadState.append is LoadState.Loading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
-                    }
-                }
+    when {
+        pagingState.refresh is LoadState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
+
+        dictations.isEmpty() -> {
+            EmptyDictationsState()
+        }
+
+        else -> {
+            EnglishLevelDropdown(
+                selectedEnglishLevel = state.englishLevel,
+                onEnglishLevelSelected = { onEvent(DictationsListEvent.SelectEnglishLevel(it)) }
+            )
+
+            DictationsListColumn(
+                dailyDictations = dailyDictations,
+                allDictations = allDictations,
+                hideCompleted = state.hideCompleted,
+                pagingState = pagingState,
+                onToggleHideCompleted = { onEvent(DictationsListEvent.ToggleHideCompleted) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyDictationsState() {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = stringResource(R.string.dictations_empty_text),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        DictationGuidance()
     }
 }
 
@@ -279,5 +227,88 @@ fun EnglishLevelIcon(
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold
         )
+    }
+}
+
+@Composable
+private fun DictationsListColumn(
+    dailyDictations: List<Dictation>,
+    allDictations: List<Dictation>,
+    hideCompleted: Boolean,
+    pagingState: CombinedLoadStates,
+    onToggleHideCompleted: () -> Unit
+) {
+    val hideCompletedText = if (hideCompleted) {
+        stringResource(R.string.show_completed_text)
+    } else {
+        stringResource(R.string.hide_completed_text)
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 60.dp, start = 12.dp, end = 12.dp)
+    ) {
+        item { Spacer(modifier = Modifier.height(8.dp)) }
+
+        if (dailyDictations.isNotEmpty()) {
+            item {
+                Text(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    text = stringResource(R.string.daily_dictations_text),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            items(dailyDictations) {
+                DictationItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = it.title,
+                    isNew = it.isNew,
+                    onItemClick = {
+                        // TODO: Navigate to detail screen
+                    }
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(R.string.all_dictations_text),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    modifier = Modifier.clickable { onToggleHideCompleted() },
+                    text = hideCompletedText,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = Color.Gray
+                )
+            }
+        }
+
+        items(allDictations) {
+            DictationItem(
+                modifier = Modifier.fillMaxWidth(),
+                title = it.title,
+                isNew = it.isNew,
+                onItemClick = {
+                    // TODO: Navigate to detail screen
+                }
+            )
+        }
+
+        item {
+            if (pagingState.append is LoadState.Loading) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            }
+        }
     }
 }
