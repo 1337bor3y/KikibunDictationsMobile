@@ -73,6 +73,7 @@ fun DictationGuidance(modifier: Modifier = Modifier) {
             .padding(horizontal = 16.dp)
             .verticalScroll(scrollState)
     ) {
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.tip_screen_top_text),
             style = MaterialTheme.typography.titleMedium.copy(
@@ -86,7 +87,6 @@ fun DictationGuidance(modifier: Modifier = Modifier) {
         TypeTipCard()
         Spacer(modifier = Modifier.height(20.dp))
         ResultAnalysis()
-        Spacer(modifier = Modifier.height(20.dp))
         AccuracyScoreTipCard()
         Spacer(modifier = Modifier.height(20.dp))
     }
