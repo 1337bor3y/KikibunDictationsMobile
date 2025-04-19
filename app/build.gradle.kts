@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.hiltAndroid)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -12,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.bor3y.kikibundictations"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -61,9 +62,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.runtime)
 
-    // Unit & UI Testing
-    testImplementation(libs.junit)
+    // Testing
+    testImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -73,9 +75,19 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
-    // Include text-recognition module
+    // Worker
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+
+    // Startup
+    implementation(libs.androidx.startup.runtime)
+
+    // Modules
+    implementation(project(":core"))
     implementation(project(":text-recognition"))
+    implementation(project(":dictations-list"))
 }
