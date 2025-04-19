@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="english_level_dropdown_text">English Level</string>
+    <string name="dropdown_arrow_icon_content_description">Dropdown arrow</string>
+    <string name="daily_dictations_text">Daily Dictations</string>
+    <string name="all_dictations_text">All Dictations</string>
+    <string name="hide_completed_text">Hide Completed</string>
+    <string name="show_completed_text">Show Completed</string>
+    <string name="tip_screen_top_text">HOW IT WORKS</string>
+    <string name="infinite_transition">Infinite transition</string>
+    <string name="sound_progress_animation">Sound progress animation</string>
+    <string name="text_alpha_animation">Text alpha animation</string>
+    <string name="speaker_icon_content_description">Speaker</string>
+    <string name="tip_screen_listen_text">Listen first to understand the content.\nDo not write yet.</string>
+    <string name="tip_screen_hear_text">Then, type what you hear</string>
+    <string name="tip_screen_result_text">Result Analysis</string>
+    <string name="tip_screen_accuracy_text">See your accuracy score</string>
+    <string name="tip_screen_accuracy_number">92.5%</string>
+    <string name="dictations_empty_text">Fetching your dictations…\nTurn on your Internet!</string>
+</resources>

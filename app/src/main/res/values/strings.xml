@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">KikibunDictations</string>
+    <string name="snackbar_close_content_description">Close snackbar</string>
+    <string name="offline_mode_icon_content_description">Offline Mode</string>
+    <string name="offline_mode_text">Offline Mode</string>
+    <string name="reconnected_text">Reconnected</string>
+    <string name="offline_mode_dialog_text">You are currently in Offline Mode. Some features, such as downloading new dictations, may not be available.</string>
+    <string name="offline_mode_dialog_title">Offline Mode Restrictions</string>
+    <string name="offline_mode_dialog_button_text">Close and Hide Banner</string>
 </resources>
