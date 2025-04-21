@@ -56,4 +56,8 @@ class RoomLocalDataSource @Inject constructor(
     override suspend fun getDictationById(id: String): DictationLocal? {
         return dao.getDictationById(id)?.toLocal()
     }
+
+    override suspend fun isDbEmpty(): Boolean {
+        return dao.getDictationsCount() == 0
+    }
 }

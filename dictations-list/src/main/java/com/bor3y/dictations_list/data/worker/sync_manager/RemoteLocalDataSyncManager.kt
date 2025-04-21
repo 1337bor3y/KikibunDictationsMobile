@@ -27,6 +27,10 @@ class RemoteLocalDataSyncManager @Inject constructor(
                         ?: "Unknown error"
                 )
                 return@withContext false
+            }.let { list ->
+                if (localDataSource.isDbEmpty()) {
+                    list.take(36)
+                } else list
             }
 
             val detailList = remoteListResult.map { item ->

@@ -19,4 +19,6 @@ interface LocalDataSource {
     suspend fun getOldestDictations(count: Int): List<DictationLocal>
 
     suspend fun getDictationById(id: String): DictationLocal?
+
+    suspend fun isDbEmpty(): Boolean
 }
