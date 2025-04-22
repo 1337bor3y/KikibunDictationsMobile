@@ -44,8 +44,7 @@ fun DictationNavHost(
                     text = dictation.text,
                     audioFileDictation = dictation.audioFileDictation,
                     audioFileNormal = dictation.audioFileNormal,
-                    englishLevelNumber = dictation.englishLevel.name,
-                    englishLevelText = dictation.englishLevel.description
+                    englishLevelName = dictation.englishLevel.name
                 )
             )
         }

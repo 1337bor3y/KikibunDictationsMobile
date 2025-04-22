@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.bor3y.dictation_detail"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 28
@@ -46,6 +46,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.runtime)
+
+    // Testing
+    debugImplementation(libs.androidx.ui.tooling)
 
     // Hilt
     implementation(libs.hilt.android)

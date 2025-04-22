@@ -6,6 +6,5 @@ data class DictationDetail(
     val text: String,
     val audioFileDictation: String,
     val audioFileNormal: String,
-    val englishLevelNumber: String,
-    val englishLevelText: String
+    val englishLevelName: String
 )
