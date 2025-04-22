@@ -1,5 +1,6 @@
 package com.bor3y.dictations_list.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,7 +54,7 @@ import com.bor3y.dictations_list.presentation.component.DictationItem
 fun DictationsListScreen(
     modifier: Modifier = Modifier,
     viewModel: DictationsListViewModel = hiltViewModel(),
-    showError: (String) -> Unit
+    onDictationClick: (Dictation) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
@@ -60,10 +62,15 @@ fun DictationsListScreen(
     val dictations = dictationsPaging.itemSnapshotList.items.filter {
         !state.hideCompleted || !it.isCompleted
     }
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = dictationsPaging.loadState) {
         if (dictationsPaging.loadState.refresh is LoadState.Error) {
-            showError("Error: ${(dictationsPaging.loadState.refresh as LoadState.Error).error.message}")
+            Toast.makeText(
+                context,
+                "Error: ${(dictationsPaging.loadState.refresh as LoadState.Error).error.message}",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -72,7 +79,8 @@ fun DictationsListScreen(
             state = state,
             dictations = dictations,
             pagingState = dictationsPaging.loadState,
-            onEvent = onEvent
+            onEvent = onEvent,
+            onDictationClick = onDictationClick
         )
     }
 }
@@ -82,7 +90,8 @@ private fun DictationsListContent(
     state: DictationsListState,
     dictations: List<Dictation>,
     pagingState: CombinedLoadStates,
-    onEvent: (DictationsListEvent) -> Unit
+    onEvent: (DictationsListEvent) -> Unit,
+    onDictationClick: (Dictation) -> Unit
 ) {
     val dailyDictations = dictations.filter { it.isNew }
     val allDictations = dictations.filter { !it.isNew }
@@ -109,7 +118,8 @@ private fun DictationsListContent(
                 allDictations = allDictations,
                 hideCompleted = state.hideCompleted,
                 pagingState = pagingState,
-                onToggleHideCompleted = { onEvent(DictationsListEvent.ToggleHideCompleted) }
+                onToggleHideCompleted = { onEvent(DictationsListEvent.ToggleHideCompleted) },
+                onDictationClick = onDictationClick
             )
         }
     }
@@ -236,7 +246,8 @@ private fun DictationsListColumn(
     allDictations: List<Dictation>,
     hideCompleted: Boolean,
     pagingState: CombinedLoadStates,
-    onToggleHideCompleted: () -> Unit
+    onToggleHideCompleted: () -> Unit,
+    onDictationClick: (Dictation) -> Unit
 ) {
     val hideCompletedText = if (hideCompleted) {
         stringResource(R.string.show_completed_text)
@@ -266,7 +277,7 @@ private fun DictationsListColumn(
                     title = it.title,
                     isNew = it.isNew,
                     onItemClick = {
-                        // TODO: Navigate to detail screen
+                        onDictationClick(it)
                     }
                 )
             }
@@ -298,7 +309,7 @@ private fun DictationsListColumn(
                 title = it.title,
                 isNew = it.isNew,
                 onItemClick = {
-                    // TODO: Navigate to detail screen
+                    onDictationClick(it)
                 }
             )
         }

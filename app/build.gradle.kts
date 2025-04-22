@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -86,8 +87,13 @@ dependencies {
     // Startup
     implementation(libs.androidx.startup.runtime)
 
+    // Navigation
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+
     // Modules
     implementation(project(":core"))
     implementation(project(":text-recognition"))
     implementation(project(":dictations-list"))
+    implementation(project(":dictation-detail"))
 }

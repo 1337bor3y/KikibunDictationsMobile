@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -79,6 +80,9 @@ dependencies {
 
     // Icons
     implementation(libs.androidx.material.icons.extended)
+
+    // Navigation
+    implementation(libs.kotlinx.serialization.json)
 
     // Include core module
     implementation(project(":core"))

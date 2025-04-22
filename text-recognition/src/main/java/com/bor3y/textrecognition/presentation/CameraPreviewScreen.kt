@@ -1,6 +1,7 @@
 package com.bor3y.textrecognition.presentation
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.camera.compose.CameraXViewfinder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -48,8 +49,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 fun CameraPreviewScreen(
     modifier: Modifier = Modifier,
     viewModel: TextRecognitionViewModel = hiltViewModel(),
-    onTextRecognized: (String) -> Unit,
-    showError: (String) -> Unit
+    onTextRecognized: (String) -> Unit
 ) {
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -59,8 +59,7 @@ fun CameraPreviewScreen(
             modifier = modifier,
             state = state,
             onEvent = viewModel::onEvent,
-            onTextRecognized = onTextRecognized,
-            showError = showError
+            onTextRecognized = onTextRecognized
         )
     } else {
         CameraPermissionRequest(
@@ -75,8 +74,7 @@ fun CameraPreviewContent(
     modifier: Modifier = Modifier,
     state: TextRecognitionState,
     onEvent: (TextRecognitionEvent) -> Unit,
-    onTextRecognized: (String) -> Unit,
-    showError: (String) -> Unit
+    onTextRecognized: (String) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -92,7 +90,7 @@ fun CameraPreviewContent(
 
     LaunchedEffect(state.error) {
         state.error?.let { message ->
-            showError(message)
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         }
     }
 

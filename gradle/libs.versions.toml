@@ -39,9 +39,10 @@ espressoCore = "3.6.1"
 mockk = "1.13.17"
 turbine = "0.7.0"
 kotlinxCoroutinesTest = "1.7.3"
-junit = "4.13.2"
-appcompat = "1.7.0"
-material = "1.12.0"
+
+# Navigation
+composeNavigation = "2.8.9"
+serialization = "1.7.0"
 
 [libraries]
 # Core
@@ -107,9 +108,10 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Navigation
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 
 [plugins]
 # Android Gradle Plugin
@@ -123,3 +125,6 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 
 # Hilt
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
+
+# Navigation
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
