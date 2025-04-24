@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.Headset
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.AudioFile
+import androidx.compose.material.icons.outlined.CheckCircleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -25,6 +27,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -71,6 +75,7 @@ fun DictationDetailContent(
             englishLevelName = "B1"
         )
         AudioPlayback()
+        Transcription()
     }
 }
 
@@ -145,7 +150,7 @@ fun AudioPlayback(
         modifier = modifier
     ) {
         AudioPlaybackSpeed()
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         AudioPlayerCard()
     }
 }
@@ -252,6 +257,70 @@ fun AudioPlayerCard(
             }
             // TODO: Implement Audio Player instead of Box
             Box(modifier = Modifier.size(70.dp))
+        }
+    }
+}
+
+
+@Composable
+fun Transcription(
+    modifier: Modifier = Modifier
+) {
+    var typedText by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = "Your transcription:",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 170.dp),
+            value = typedText,
+            onValueChange = { typedText = it },
+            shape = RoundedCornerShape(8.dp),
+            placeholder = {
+                Text(
+                    text = "Listen carefully and type what you hear...",
+                    color = Color.Gray
+                )
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.LightGray,
+                unfocusedBorderColor = Color.LightGray,
+                disabledBorderColor = Color.LightGray,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent
+            )
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors().copy(
+                containerColor = Color.Black
+            ),
+            enabled = typedText.isNotBlank(),
+            onClick = {
+                // TODO: Check the Dictation correctness
+            }
+        ) {
+            Text(
+                text = "Check My Dictation",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                imageVector = Icons.Outlined.CheckCircleOutline,
+                contentDescription = "Check circle"
+            )
         }
     }
 }
