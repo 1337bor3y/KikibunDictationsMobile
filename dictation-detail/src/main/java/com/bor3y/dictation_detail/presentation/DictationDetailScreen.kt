@@ -1,6 +1,8 @@
 package com.bor3y.dictation_detail.presentation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,12 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.Headset
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.AudioFile
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -141,6 +145,8 @@ fun AudioPlayback(
         modifier = modifier
     ) {
         AudioPlaybackSpeed()
+        Spacer(modifier = Modifier.height(8.dp))
+        AudioPlayerCard()
     }
 }
 
@@ -209,5 +215,43 @@ fun PlaybackButton(
         Icon(imageVector = icon, contentDescription = "$label icon")
         Spacer(modifier = Modifier.width(4.dp))
         Text(text = label)
+    }
+}
+
+@Composable
+fun AudioPlayerCard(
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        border = BorderStroke(1.dp, Color.LightGray),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AudioFile,
+                    contentDescription = "File open"
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Listen first to understand the content. Do not write yet.",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+            // TODO: Implement Audio Player instead of Box
+            Box(modifier = Modifier.size(70.dp))
+        }
     }
 }
