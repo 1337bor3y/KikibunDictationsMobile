@@ -1,8 +1,9 @@
 package com.bor3y.dictation_detail.presentation
 
+import android.media.MediaPlayer
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,12 +12,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.Headset
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.AudioFile
 import androidx.compose.material.icons.outlined.CheckCircleOutline
@@ -25,27 +30,38 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bor3y.dictation_detail.R
 import com.bor3y.dictation_detail.domain.model.DictationDetail
+import kotlinx.coroutines.delay
+import java.io.File
+import java.util.Locale
 
 @Composable
 fun DictationDetailScreen(
@@ -53,28 +69,33 @@ fun DictationDetailScreen(
     dictationDetail: DictationDetail
 ) {
     DictationDetailContent(
-        modifier = modifier
+        modifier = modifier,
+        dictationDetail = dictationDetail
     )
 }
 
-@Preview(
-    showBackground = true
-)
 @Composable
 fun DictationDetailContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    dictationDetail: DictationDetail
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         DictationTitle(
-            title = "My Trip to Italy",
-            englishLevelName = "B1"
+            title = dictationDetail.title,
+            englishLevelName = dictationDetail.englishLevelName
         )
-        AudioPlayback()
+        AudioPlayback(
+            audioFileNormal = dictationDetail.audioFileNormal,
+            audioFileDictation = dictationDetail.audioFileDictation,
+        )
         Transcription()
     }
 }
@@ -144,20 +165,33 @@ fun DictationTitle(
 
 @Composable
 fun AudioPlayback(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    audioFileNormal: String,
+    audioFileDictation: String
 ) {
     Column(
         modifier = modifier
     ) {
-        AudioPlaybackSpeed()
+        var isNormalSpeed by rememberSaveable {
+            mutableStateOf(true)
+        }
+
+        AudioPlaybackSpeed {
+            isNormalSpeed = it
+        }
         Spacer(modifier = Modifier.height(16.dp))
-        AudioPlayerCard()
+        AudioPlayerCard(
+            isNormalSpeed = isNormalSpeed,
+            audioFileNormal = audioFileNormal,
+            audioFileDictation = audioFileDictation
+        )
     }
 }
 
 @Composable
 fun AudioPlaybackSpeed(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    setIsNormalSpeed: (Boolean) -> Unit
 ) {
     var isNormalSpeed by rememberSaveable {
         mutableStateOf(true)
@@ -180,6 +214,7 @@ fun AudioPlaybackSpeed(
                 label = "Normal Speed",
                 onClick = {
                     isNormalSpeed = true
+                    setIsNormalSpeed(true)
                     /* TODO: Set Normal Speed audio */
                 },
                 icon = Icons.AutoMirrored.Outlined.VolumeUp,
@@ -191,6 +226,7 @@ fun AudioPlaybackSpeed(
                 label = "Dictation Speed",
                 onClick = {
                     isNormalSpeed = false
+                    setIsNormalSpeed(false)
                     /* TODO: Set Dictation Speed audio */
                 },
                 icon = Icons.Default.Headset,
@@ -225,7 +261,10 @@ fun PlaybackButton(
 
 @Composable
 fun AudioPlayerCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isNormalSpeed: Boolean,
+    audioFileNormal: String,
+    audioFileDictation: String
 ) {
     Card(
         modifier = modifier
@@ -255,12 +294,121 @@ fun AudioPlayerCard(
                     style = MaterialTheme.typography.titleMedium
                 )
             }
-            // TODO: Implement Audio Player instead of Box
-            Box(modifier = Modifier.size(70.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+            CustomAudioPlayer(
+                filePath = if (isNormalSpeed) audioFileNormal else audioFileDictation
+            )
         }
     }
 }
 
+@Composable
+fun CustomAudioPlayer(
+    filePath: String
+) {
+    val context = LocalContext.current
+    var isPlaying by rememberSaveable { mutableStateOf(false) }
+    var currentPosition by rememberSaveable { mutableLongStateOf(0L) }
+    var duration by rememberSaveable { mutableLongStateOf(0L) }
+
+    var mediaPlayer: MediaPlayer? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(filePath) {
+        mediaPlayer?.release()
+        val player = MediaPlayer().apply {
+            setDataSource(context, Uri.fromFile(File(filePath)))
+            prepare()
+            duration = this.duration.toLong()
+
+            setOnCompletionListener {
+                seekTo(0)
+                currentPosition = 0L
+                isPlaying = false
+            }
+        }
+        mediaPlayer = player
+        currentPosition = 0L
+        duration = player.duration.toLong()
+        isPlaying = false
+    }
+
+    LaunchedEffect(isPlaying) {
+        while (isPlaying) {
+            mediaPlayer?.let {
+                currentPosition = it.currentPosition.toLong()
+            }
+            delay(1000L)
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            mediaPlayer?.release()
+        }
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        IconButton(onClick = {
+            mediaPlayer?.let {
+                if (it.isPlaying) {
+                    it.pause()
+                    isPlaying = false
+                } else {
+                    it.start()
+                    isPlaying = true
+                }
+            }
+        }) {
+            Icon(
+                imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                contentDescription = null
+            )
+        }
+
+        Column(modifier = Modifier.weight(1f)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(formatTime(currentPosition), fontSize = 12.sp)
+                Text(formatTime(duration), fontSize = 12.sp)
+            }
+
+            Slider(
+                value = currentPosition.toFloat().coerceAtMost(duration.toFloat()),
+                onValueChange = {
+                    currentPosition = it.toLong()
+                    mediaPlayer?.seekTo(it.toInt())
+                },
+                valueRange = 0f..duration.toFloat(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.Black,
+                    activeTrackColor = Color.DarkGray,
+                    inactiveTrackColor = Color.Gray,
+                )
+            )
+        }
+
+        IconButton(onClick = {
+            // TODO: And menu
+        }) {
+            Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+        }
+    }
+}
+
+fun formatTime(millis: Long): String {
+    val totalSeconds = millis / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format(Locale.US, "%d:%02d", minutes, seconds)
+}
 
 @Composable
 fun Transcription(
