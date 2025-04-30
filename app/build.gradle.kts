@@ -91,6 +91,9 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
+    // Leak Canary
+    debugImplementation(libs.leakcanary.android)
+
     // Modules
     implementation(project(":core"))
     implementation(project(":text-recognition"))
