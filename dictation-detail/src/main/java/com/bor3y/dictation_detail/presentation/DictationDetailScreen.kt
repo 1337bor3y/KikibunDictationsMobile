@@ -1,7 +1,5 @@
 package com.bor3y.dictation_detail.presentation
 
-import android.media.MediaPlayer
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,12 +37,9 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,27 +52,46 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bor3y.dictation_detail.R
 import com.bor3y.dictation_detail.domain.model.DictationDetail
-import kotlinx.coroutines.delay
-import java.io.File
 import java.util.Locale
 
 @Composable
 fun DictationDetailScreen(
     modifier: Modifier = Modifier,
-    dictationDetail: DictationDetail
+    dictationDetail: DictationDetail,
+    viewModel: DictationDetailViewModel = hiltViewModel()
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val onEvent = viewModel::onEvent
+    val context = LocalContext.current
+
+    LaunchedEffect(dictationDetail.id) {
+        onEvent(
+            DictationDetailEvent.SetFilePaths(
+                audioFileDictation = dictationDetail.audioFileDictation,
+                audioFileNormal = dictationDetail.audioFileNormal,
+                context = context
+            )
+        )
+    }
+
     DictationDetailContent(
         modifier = modifier,
-        dictationDetail = dictationDetail
+        dictationDetail = dictationDetail,
+        state = state,
+        onEvent = onEvent
     )
 }
 
 @Composable
 fun DictationDetailContent(
     modifier: Modifier = Modifier,
-    dictationDetail: DictationDetail
+    dictationDetail: DictationDetail,
+    state: DictationDetailState,
+    onEvent: (DictationDetailEvent) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -93,8 +107,8 @@ fun DictationDetailContent(
             englishLevelName = dictationDetail.englishLevelName
         )
         AudioPlayback(
-            audioFileNormal = dictationDetail.audioFileNormal,
-            audioFileDictation = dictationDetail.audioFileDictation,
+            state = state,
+            onEvent = onEvent,
         )
         Transcription()
     }
@@ -166,24 +180,20 @@ fun DictationTitle(
 @Composable
 fun AudioPlayback(
     modifier: Modifier = Modifier,
-    audioFileNormal: String,
-    audioFileDictation: String
+    state: DictationDetailState,
+    onEvent: (DictationDetailEvent) -> Unit
 ) {
     Column(
         modifier = modifier
     ) {
-        var isNormalSpeed by rememberSaveable {
-            mutableStateOf(true)
-        }
-
-        AudioPlaybackSpeed {
-            isNormalSpeed = it
-        }
+        AudioPlaybackSpeed(
+            state = state,
+            onEvent = onEvent
+        )
         Spacer(modifier = Modifier.height(16.dp))
         AudioPlayerCard(
-            isNormalSpeed = isNormalSpeed,
-            audioFileNormal = audioFileNormal,
-            audioFileDictation = audioFileDictation
+            state = state,
+            onEvent = onEvent
         )
     }
 }
@@ -191,11 +201,10 @@ fun AudioPlayback(
 @Composable
 fun AudioPlaybackSpeed(
     modifier: Modifier = Modifier,
-    setIsNormalSpeed: (Boolean) -> Unit
+    state: DictationDetailState,
+    onEvent: (DictationDetailEvent) -> Unit
 ) {
-    var isNormalSpeed by rememberSaveable {
-        mutableStateOf(true)
-    }
+    val context = LocalContext.current
 
     Column(
         modifier = modifier.fillMaxWidth()
@@ -213,24 +222,20 @@ fun AudioPlaybackSpeed(
                 modifier = Modifier.weight(1f, true),
                 label = "Normal Speed",
                 onClick = {
-                    isNormalSpeed = true
-                    setIsNormalSpeed(true)
-                    /* TODO: Set Normal Speed audio */
+                    onEvent(DictationDetailEvent.ChangePlaybackSpeed(context))
                 },
                 icon = Icons.AutoMirrored.Outlined.VolumeUp,
-                isSelected = isNormalSpeed
+                isSelected = state.isNormalSpeed
             )
             Spacer(modifier = Modifier.width(4.dp))
             PlaybackButton(
                 modifier = Modifier.weight(1f, true),
                 label = "Dictation Speed",
                 onClick = {
-                    isNormalSpeed = false
-                    setIsNormalSpeed(false)
-                    /* TODO: Set Dictation Speed audio */
+                    onEvent(DictationDetailEvent.ChangePlaybackSpeed(context))
                 },
                 icon = Icons.Default.Headset,
-                isSelected = !isNormalSpeed
+                isSelected = !state.isNormalSpeed
             )
         }
     }
@@ -262,9 +267,8 @@ fun PlaybackButton(
 @Composable
 fun AudioPlayerCard(
     modifier: Modifier = Modifier,
-    isNormalSpeed: Boolean,
-    audioFileNormal: String,
-    audioFileDictation: String
+    state: DictationDetailState,
+    onEvent: (DictationDetailEvent) -> Unit
 ) {
     Card(
         modifier = modifier
@@ -296,7 +300,8 @@ fun AudioPlayerCard(
             }
             Spacer(modifier = Modifier.height(8.dp))
             CustomAudioPlayer(
-                filePath = if (isNormalSpeed) audioFileNormal else audioFileDictation
+                state = state,
+                onEvent = onEvent
             )
         }
     }
@@ -304,67 +309,19 @@ fun AudioPlayerCard(
 
 @Composable
 fun CustomAudioPlayer(
-    filePath: String
+    state: DictationDetailState,
+    onEvent: (DictationDetailEvent) -> Unit
 ) {
-    val context = LocalContext.current
-    var isPlaying by rememberSaveable { mutableStateOf(false) }
-    var currentPosition by rememberSaveable { mutableLongStateOf(0L) }
-    var duration by rememberSaveable { mutableLongStateOf(0L) }
-
-    var mediaPlayer: MediaPlayer? by remember { mutableStateOf(null) }
-
-    LaunchedEffect(filePath) {
-        mediaPlayer?.release()
-        val player = MediaPlayer().apply {
-            setDataSource(context, Uri.fromFile(File(filePath)))
-            prepare()
-            duration = this.duration.toLong()
-
-            setOnCompletionListener {
-                seekTo(0)
-                currentPosition = 0L
-                isPlaying = false
-            }
-        }
-        mediaPlayer = player
-        currentPosition = 0L
-        duration = player.duration.toLong()
-        isPlaying = false
-    }
-
-    LaunchedEffect(isPlaying) {
-        while (isPlaying) {
-            mediaPlayer?.let {
-                currentPosition = it.currentPosition.toLong()
-            }
-            delay(1000L)
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            mediaPlayer?.release()
-        }
-    }
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center
     ) {
         IconButton(onClick = {
-            mediaPlayer?.let {
-                if (it.isPlaying) {
-                    it.pause()
-                    isPlaying = false
-                } else {
-                    it.start()
-                    isPlaying = true
-                }
-            }
+            onEvent(DictationDetailEvent.TogglePlayPause)
         }) {
             Icon(
-                imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                imageVector = if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                 contentDescription = null
             )
         }
@@ -375,17 +332,16 @@ fun CustomAudioPlayer(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(formatTime(currentPosition), fontSize = 12.sp)
-                Text(formatTime(duration), fontSize = 12.sp)
+                Text(formatTime(state.currentPosition), fontSize = 12.sp)
+                Text(formatTime(state.duration), fontSize = 12.sp)
             }
 
             Slider(
-                value = currentPosition.toFloat().coerceAtMost(duration.toFloat()),
+                value = state.currentPosition.toFloat().coerceAtMost(state.duration.toFloat()),
                 onValueChange = {
-                    currentPosition = it.toLong()
-                    mediaPlayer?.seekTo(it.toInt())
+                    onEvent(DictationDetailEvent.SeekTo(it.toLong()))
                 },
-                valueRange = 0f..duration.toFloat(),
+                valueRange = 0f..state.duration.toFloat(),
                 modifier = Modifier.fillMaxWidth(),
                 colors = SliderDefaults.colors(
                     thumbColor = Color.Black,
