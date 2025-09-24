@@ -14,4 +14,10 @@ sealed interface DictationDetailEvent {
     data object TogglePlayPause : DictationDetailEvent
 
     data class SeekTo(val position: Long) : DictationDetailEvent
+
+    data class SetTypedText(val text: String): DictationDetailEvent
+
+    data object FindAccuracy: DictationDetailEvent
+
+    data object HideAccuracyDialog: DictationDetailEvent
 }

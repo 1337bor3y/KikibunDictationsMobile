@@ -39,9 +39,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -67,6 +64,7 @@ fun DictationDetailScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
     val context = LocalContext.current
+    onEvent(DictationDetailEvent.SetTranscription(dictationDetail.text))
 
     LaunchedEffect(dictationDetail.id) {
         onEvent(
@@ -110,7 +108,10 @@ fun DictationDetailContent(
             state = state,
             onEvent = onEvent,
         )
-        Transcription()
+        Transcription(
+            state = state,
+            onEvent = onEvent,
+        )
     }
 }
 
@@ -368,12 +369,10 @@ fun formatTime(millis: Long): String {
 
 @Composable
 fun Transcription(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    state: DictationDetailState,
+    onEvent: (DictationDetailEvent) -> Unit
 ) {
-    var typedText by rememberSaveable {
-        mutableStateOf("")
-    }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -387,8 +386,10 @@ fun Transcription(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 170.dp),
-            value = typedText,
-            onValueChange = { typedText = it },
+            value = state.typedText,
+            onValueChange = {
+                onEvent(DictationDetailEvent.SetTypedText(it))
+            },
             shape = RoundedCornerShape(8.dp),
             placeholder = {
                 Text(
@@ -411,9 +412,9 @@ fun Transcription(
             colors = ButtonDefaults.buttonColors().copy(
                 containerColor = Color.Black
             ),
-            enabled = typedText.isNotBlank(),
+            enabled = state.typedText.isNotBlank(),
             onClick = {
-                // TODO: Check the Dictation correctness
+                onEvent(DictationDetailEvent.FindAccuracy)
             }
         ) {
             Text(
@@ -426,5 +427,14 @@ fun Transcription(
                 contentDescription = "Check circle"
             )
         }
+    }
+
+    if (state.showAccuracyDialog) {
+        AccuracyResultDialog(
+            state = state,
+            onDismiss = {
+                onEvent(DictationDetailEvent.HideAccuracyDialog)
+            }
+        )
     }
 }

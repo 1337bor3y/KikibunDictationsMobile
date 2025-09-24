@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bor3y.text_accuracy_lib.TextAccuracy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,8 @@ class DictationDetailViewModel @Inject constructor() : ViewModel() {
     val state = _state.asStateFlow()
 
     private var mediaPlayer: MediaPlayer? = null
+
+    private val textAccuracy: TextAccuracy = TextAccuracy()
 
     init {
         mediaPlayer = MediaPlayer()
@@ -54,6 +57,20 @@ class DictationDetailViewModel @Inject constructor() : ViewModel() {
             is DictationDetailEvent.SeekTo -> seekTo(event.position)
 
             DictationDetailEvent.TogglePlayPause -> togglePlayPause()
+
+            DictationDetailEvent.FindAccuracy -> findAccuracy()
+
+            is DictationDetailEvent.SetTypedText -> _state.update {
+                it.copy(
+                    typedText = event.text
+                )
+            }
+
+            DictationDetailEvent.HideAccuracyDialog -> _state.update {
+                it.copy(
+                    showAccuracyDialog = false
+                )
+            }
         }
     }
 
@@ -132,5 +149,17 @@ class DictationDetailViewModel @Inject constructor() : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         mediaPlayer?.release()
+    }
+
+    private fun findAccuracy() {
+        _state.update {
+            it.copy(
+                accuracyResult = textAccuracy.findAccuracy(
+                    actualText = state.value.transcription,
+                    userText = state.value.typedText
+                ),
+                showAccuracyDialog = true
+            )
+        }
     }
 }
