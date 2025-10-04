@@ -1,6 +1,7 @@
 package com.bor3y.textrecognition.presentation
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.LifecycleOwner
@@ -18,4 +19,6 @@ sealed interface TextRecognitionEvent {
 
     data class GetTextFromImage(val screenSize: Size, val onTextRecognized: (String) -> Unit) :
         TextRecognitionEvent
+
+    data class OnGalleryImageSelected(val bitmap: Bitmap?): TextRecognitionEvent
 }

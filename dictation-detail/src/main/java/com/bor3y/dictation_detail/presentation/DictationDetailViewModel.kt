@@ -71,6 +71,20 @@ class DictationDetailViewModel @Inject constructor() : ViewModel() {
                     showAccuracyDialog = false
                 )
             }
+
+            DictationDetailEvent.OpenCamera -> _state.update { it.copy(showCameraScreen = true) }
+
+            DictationDetailEvent.CloseCamera -> _state.update { it.copy(showCameraScreen = false) }
+
+            is DictationDetailEvent.OnCameraTextRecognized -> _state.update {
+                it.copy(
+                    showCameraScreen = false,
+                    typedText = event.text
+                )
+            }
+
+            is DictationDetailEvent.OnGalleryImageSelected ->
+                _state.update { it.copy(previewImage = true, selectedImageBitmap = event.bitmap) }
         }
     }
 

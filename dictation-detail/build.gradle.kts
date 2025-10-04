@@ -59,4 +59,5 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     implementation(project(":text-accuracy-lib"))
+    implementation(project(":text-recognition"))
 }

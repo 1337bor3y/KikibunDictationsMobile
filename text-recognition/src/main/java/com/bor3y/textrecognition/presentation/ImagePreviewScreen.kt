@@ -7,9 +7,8 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -84,13 +83,12 @@ fun ImagePreviewScreen(
         IconButton(
             onClick = { onEvent(TextRecognitionEvent.CloseImagePreview) },
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-                .background(Color.White, shape = CircleShape)
+                .align(Alignment.TopStart)
         ) {
             Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = stringResource(R.string.close_image_preview_button_content_description)
+                imageVector = Icons.Default.ArrowBackIosNew,
+                contentDescription = stringResource(R.string.close_image_preview_button_content_description),
+                tint = colorResource(R.color.analyze_button_container_color)
             )
         }
 
