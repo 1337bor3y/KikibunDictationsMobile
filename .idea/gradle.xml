@@ -5,7 +5,7 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+        <option name="gradleJvm" value="jbr-17" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/dictation-detail" />
             <option value="$PROJECT_DIR$/dictations-list" />
+            <option value="$PROJECT_DIR$/text-accuracy-lib" />
             <option value="$PROJECT_DIR$/text-recognition" />
           </set>
         </option>

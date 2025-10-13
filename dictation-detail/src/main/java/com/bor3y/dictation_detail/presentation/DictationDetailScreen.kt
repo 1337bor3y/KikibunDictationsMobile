@@ -16,11 +16,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Headset
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.AudioFile
 import androidx.compose.material.icons.outlined.CheckCircleOutline
 import androidx.compose.material3.Button
@@ -30,7 +29,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
@@ -39,9 +37,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,10 +47,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bor3y.dictation_detail.R
 import com.bor3y.dictation_detail.domain.model.DictationDetail
+import com.bor3y.textrecognition.presentation.CameraPreviewScreen
+import com.bor3y.textrecognition.presentation.isLandscape
 import java.util.Locale
 
 @Composable
@@ -67,6 +66,7 @@ fun DictationDetailScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
     val context = LocalContext.current
+    onEvent(DictationDetailEvent.SetTranscription(dictationDetail.text))
 
     LaunchedEffect(dictationDetail.id) {
         onEvent(
@@ -110,7 +110,10 @@ fun DictationDetailContent(
             state = state,
             onEvent = onEvent,
         )
-        Transcription()
+        Transcription(
+            state = state,
+            onEvent = onEvent,
+        )
     }
 }
 
@@ -158,21 +161,6 @@ fun DictationTitle(
                     color = Color.Gray
                 )
             }
-        }
-        Spacer(modifier = Modifier.width(12.dp))
-        OutlinedButton(
-            onClick = { /* TODO: Share dictation */ },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.outlinedButtonColors().copy(
-                contentColor = Color.Gray
-            )
-        ) {
-            Icon(
-                imageVector = Icons.Default.Share,
-                contentDescription = "Share dictation"
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(text = "Share")
         }
     }
 }
@@ -350,12 +338,6 @@ fun CustomAudioPlayer(
                 )
             )
         }
-
-        IconButton(onClick = {
-            // TODO: And menu
-        }) {
-            Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
-        }
     }
 }
 
@@ -368,12 +350,10 @@ fun formatTime(millis: Long): String {
 
 @Composable
 fun Transcription(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    state: DictationDetailState,
+    onEvent: (DictationDetailEvent) -> Unit
 ) {
-    var typedText by rememberSaveable {
-        mutableStateOf("")
-    }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -387,8 +367,10 @@ fun Transcription(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 170.dp),
-            value = typedText,
-            onValueChange = { typedText = it },
+            value = state.typedText,
+            onValueChange = {
+                onEvent(DictationDetailEvent.SetTypedText(it))
+            },
             shape = RoundedCornerShape(8.dp),
             placeholder = {
                 Text(
@@ -405,26 +387,70 @@ fun Transcription(
             )
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors().copy(
-                containerColor = Color.Black
-            ),
-            enabled = typedText.isNotBlank(),
-            onClick = {
-                // TODO: Check the Dictation correctness
-            }
-        ) {
-            Text(
-                text = "Check My Dictation",
-                style = MaterialTheme.typography.titleMedium
-            )
+        Row {
+            IconButton(
+                modifier = Modifier.weight(0.1f),
+                onClick = {
+                    onEvent(DictationDetailEvent.OpenCamera)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.CameraAlt,
+                    contentDescription = "Take a photo",
+                    tint = Color.Black
+                )            }
             Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                imageVector = Icons.Outlined.CheckCircleOutline,
-                contentDescription = "Check circle"
+            Button(
+                modifier = Modifier.weight(0.9f),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = Color.Black
+                ),
+                enabled = state.typedText.isNotBlank(),
+                onClick = {
+                    onEvent(DictationDetailEvent.FindAccuracy)
+                }
+            ) {
+                Text(
+                    text = "Check My Dictation",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    imageVector = Icons.Outlined.CheckCircleOutline,
+                    contentDescription = "Check circle"
+                )
+            }
+        }
+    }
+
+    if (state.showCameraScreen) {
+        Dialog(
+            onDismissRequest = { onEvent(DictationDetailEvent.CloseCamera) },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false
+            )
+        ) {
+            CameraPreviewScreen(
+                modifier = Modifier.then(
+                    if (isLandscape())
+                        Modifier.padding(end = 50.dp)
+                    else
+                        Modifier.padding(bottom = 50.dp)
+                    ),
+                onTextRecognized = {
+                    onEvent(DictationDetailEvent.OnCameraTextRecognized(it))
+                }
             )
         }
+    }
+
+    if (state.showAccuracyDialog) {
+        AccuracyResultDialog(
+            state = state,
+            onDismiss = {
+                onEvent(DictationDetailEvent.HideAccuracyDialog)
+            }
+        )
     }
 }

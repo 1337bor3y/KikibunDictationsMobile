@@ -44,6 +44,7 @@ kotlinxCoroutinesTest = "1.7.3"
 # Navigation
 composeNavigation = "2.8.9"
 serialization = "1.7.0"
+jetbrainsKotlinJvm = "1.9.0"
 
 [libraries]
 # Core
@@ -130,3 +131,4 @@ hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersio
 
 # Navigation
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }

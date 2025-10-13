@@ -1,7 +1,13 @@
 package com.bor3y.textrecognition.presentation
 
+import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.compose.CameraXViewfinder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,6 +22,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -79,6 +86,19 @@ fun CameraPreviewContent(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri: Uri? ->
+            uri?.let {
+                onEvent(
+                    TextRecognitionEvent.OnGalleryImageSelected(
+                        it.toBitmap(context)
+                    )
+                )
+            }
+        }
+    )
+
     LaunchedEffect(lifecycleOwner) {
         onEvent(
             TextRecognitionEvent.BindToCamera(
@@ -102,6 +122,23 @@ fun CameraPreviewContent(
             CameraXViewfinder(
                 surfaceRequest = request,
                 modifier = modifier
+            )
+        }
+
+        IconButton(
+            modifier = Modifier
+                .align(if (isLandscape()) Alignment.BottomEnd else Alignment.BottomStart)
+                .padding(24.dp),
+            onClick = {
+                pickImageLauncher.launch("image/*")
+            }
+        ) {
+            Icon(
+                modifier = Modifier
+                    .size(64.dp),
+                imageVector = Icons.Default.PhotoLibrary,
+                contentDescription = stringResource(R.string.choose_from_gallery),
+                tint = Color.White
             )
         }
 
@@ -175,5 +212,15 @@ private fun CameraPermissionRequest(
         Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
             Text(stringResource(R.string.permission_request_button_text))
         }
+    }
+}
+
+private fun Uri.toBitmap(context: Context): Bitmap? {
+    return try {
+        val source = ImageDecoder.createSource(context.contentResolver, this)
+        ImageDecoder.decodeBitmap(source)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
