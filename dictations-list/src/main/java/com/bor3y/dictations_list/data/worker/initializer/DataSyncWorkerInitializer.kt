@@ -11,7 +11,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bor3y.core.until.Constants
 import com.bor3y.dictations_list.data.worker.DataSyncWorker
-import com.bor3y.dictations_list.di.InitializerEntryPoint
+import com.bor3y.dictations_list.data.di.InitializerEntryPoint
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

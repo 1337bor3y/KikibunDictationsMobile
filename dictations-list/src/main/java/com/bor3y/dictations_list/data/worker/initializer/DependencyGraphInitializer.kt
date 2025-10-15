@@ -2,7 +2,7 @@ package com.bor3y.dictations_list.data.worker.initializer
 
 import android.content.Context
 import androidx.startup.Initializer
-import com.bor3y.dictations_list.di.InitializerEntryPoint
+import com.bor3y.dictations_list.data.di.InitializerEntryPoint
 
 class DependencyGraphInitializer : Initializer<Unit> {
 

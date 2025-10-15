@@ -1,4 +1,4 @@
-package com.bor3y.textrecognition.di
+package com.bor3y.textrecognition.data.di
 
 import com.bor3y.textrecognition.data.recognizer.ImageTextRecognizer
 import com.bor3y.textrecognition.data.recognizer.MLKitTextRecognizer

@@ -7,4 +7,5 @@
     <string name="taken_image_content_description">Captured photo</string>
     <string name="close_image_preview_button_content_description">Close image preview</string>
     <string name="analyze_button_text">Analyze</string>
+    <string name="choose_from_gallery">Choose from gallery</string>
 </resources>

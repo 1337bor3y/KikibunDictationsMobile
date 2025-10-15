@@ -4,7 +4,7 @@ import android.content.Context
 
 interface AudioFileManager {
 
-    fun saveFile(context: Context, audioUrl: String): String?
+    suspend fun saveFile(context: Context, audioUrl: String): String?
 
-    fun deleteFile(filePath: String): Boolean
+    suspend fun deleteFile(filePath: String): Boolean
 }

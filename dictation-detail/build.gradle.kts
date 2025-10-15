@@ -1,27 +1,20 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.bor3y.kikibundictations"
+    namespace = "com.bor3y.dictation_detail"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.bor3y.kikibundictations"
         minSdk = 28
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -40,17 +33,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
@@ -66,37 +48,16 @@ dependencies {
     implementation(libs.androidx.runtime)
 
     // Testing
-    testImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
-    // Worker
-    implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.androidx.hilt.work)
-    ksp(libs.androidx.hilt.compiler)
+    // Icons
+    implementation(libs.androidx.material.icons.extended)
 
-    // Startup
-    implementation(libs.androidx.startup.runtime)
-
-    // Navigation
-    implementation(libs.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
-
-    // Leak Canary
-    debugImplementation(libs.leakcanary.android)
-
-    // Modules
-    implementation(project(":core"))
+    implementation(project(":text-accuracy-lib"))
     implementation(project(":text-recognition"))
-    implementation(project(":dictations-list"))
-    implementation(project(":dictation-detail"))
 }

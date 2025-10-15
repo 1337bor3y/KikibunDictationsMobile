@@ -69,6 +69,9 @@ class TextRecognitionViewModel @Inject constructor(
                 event.screenSize,
                 event.onTextRecognized
             )
+
+            is TextRecognitionEvent.OnGalleryImageSelected ->
+                _state.update { it.copy(capturedImage = event.bitmap) }
         }
     }
 
@@ -175,7 +178,7 @@ class TextRecognitionViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        _state.update { it.copy(isLoading = false) }
+                        _state.update { TextRecognitionState() }
                         result.data?.let(onTextRecognized)
                     }
                 }

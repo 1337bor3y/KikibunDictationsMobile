@@ -7,6 +7,7 @@ ksp = "2.0.21-1.0.27"
 # Jetpack Compose
 composeBom = "2025.03.01"
 activityCompose = "1.10.1"
+leakcanaryAndroid = "2.10"
 materialIconsExtended = "1.7.8"
 runtime = "1.7.8"
 
@@ -39,6 +40,11 @@ espressoCore = "3.6.1"
 mockk = "1.13.17"
 turbine = "0.7.0"
 kotlinxCoroutinesTest = "1.7.3"
+
+# Navigation
+composeNavigation = "2.8.9"
+serialization = "1.7.0"
+jetbrainsKotlinJvm = "1.9.0"
 
 [libraries]
 # Core
@@ -89,6 +95,7 @@ androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycl
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
 
 # ML Kit
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "textRecognition" }
 
 # Accompanist
@@ -105,6 +112,10 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 
+# Navigation
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
+
 [plugins]
 # Android Gradle Plugin
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -117,3 +128,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 
 # Hilt
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
+
+# Navigation
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }

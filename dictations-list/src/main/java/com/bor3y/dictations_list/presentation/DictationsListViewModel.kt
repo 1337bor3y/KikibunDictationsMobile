@@ -36,7 +36,6 @@ class DictationsListViewModel @Inject constructor(
 
     fun onEvent(event: DictationsListEvent) {
         when (event) {
-            is DictationsListEvent.SelectDictation -> TODO()
             is DictationsListEvent.SelectEnglishLevel -> _englishLevel.value = event.englishLevel
             is DictationsListEvent.ToggleHideCompleted -> _state.update {
                 it.copy(

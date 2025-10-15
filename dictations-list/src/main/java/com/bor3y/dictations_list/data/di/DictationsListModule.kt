@@ -1,4 +1,4 @@
-package com.bor3y.dictations_list.di
+package com.bor3y.dictations_list.data.di
 
 import com.bor3y.dictations_list.data.local.LocalDataSource
 import com.bor3y.dictations_list.data.local.RoomLocalDataSource
