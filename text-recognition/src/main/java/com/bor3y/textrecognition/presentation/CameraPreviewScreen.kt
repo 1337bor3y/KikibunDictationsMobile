@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PhotoLibrary
@@ -196,21 +197,25 @@ private fun CameraPermissionRequest(
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()
             .wrapContentSize()
             .widthIn(max = 480.dp)
-            .padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(32.dp)
+            .background(color = Color.White, shape = RoundedCornerShape(24.dp))
     ) {
-        val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
-            stringResource(R.string.rationale_camera_permission)
-        } else {
-            stringResource(R.string.first_time_camera_permission_ask)
-        }
-        Text(textToShow, textAlign = TextAlign.Center)
-        Spacer(Modifier.height(16.dp))
-        Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
-            Text(stringResource(R.string.permission_request_button_text))
+        Column(
+            modifier = Modifier.padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
+                stringResource(R.string.rationale_camera_permission)
+            } else {
+                stringResource(R.string.first_time_camera_permission_ask)
+            }
+            Text(textToShow, textAlign = TextAlign.Center)
+            Spacer(Modifier.height(16.dp))
+            Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
+                Text(stringResource(R.string.permission_request_button_text))
+            }
         }
     }
 }
