@@ -398,7 +398,8 @@ fun Transcription(
                     imageVector = Icons.Filled.CameraAlt,
                     contentDescription = "Take a photo",
                     tint = Color.Black
-                )            }
+                )
+            }
             Spacer(modifier = Modifier.width(8.dp))
             Button(
                 modifier = Modifier.weight(0.9f),
@@ -437,7 +438,7 @@ fun Transcription(
                         Modifier.padding(end = 50.dp)
                     else
                         Modifier.padding(bottom = 50.dp)
-                    ),
+                ),
                 onTextRecognized = {
                     onEvent(DictationDetailEvent.OnCameraTextRecognized(it))
                 }
